@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 # from fastapi.concurrency import asynccontextmanager
 
-from db.database import async_engine, Base
+from app.db.database import async_engine, Base
 import test
 
 
