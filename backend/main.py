@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from db.database import async_engine, Base
 import test
-
+import db.model.review
 
 from dotenv import load_dotenv
 
