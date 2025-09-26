@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import BigInteger,String, TIMESTAMP, func
 from db.database import Base
 from typing import Optional
@@ -13,8 +13,10 @@ class Review(Base):
     rating:Mapped[int]
     created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP, server_default=func.now())
 
-# FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
-# FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
+    # # FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    # user:Mapped["User"]=relationship("User", back_populates="review")
+    # # FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
+    # trip:Mapped["Trip"]=relationship("Trip", back_populates="review")
 
 #like
 class like(Base):
@@ -23,8 +25,10 @@ class like(Base):
     user_id:Mapped[int] = mapped_column(BigInteger, primary_key=True, nullable=False)
     review_id:Mapped[int]= mapped_column(BigInteger, primary_key=True ,nullable=False)
 
-# FOREIGN KEY (user_id) REFERENCES user(id) on delete cascade,
-# FOREIGN KEY (review_id) REFERENCES review(id) on delete cascade
-    
+    # # FOREIGN KEY (user_id) REFERENCES user(id) on delete cascade,
+    # user:Mapped["User"]=relationship("User", back_populates="like")
+    # # FOREIGN KEY (review_id) REFERENCES review(id) on delete cascade
+    # review:Mapped["Review"]=relationship("Review", back_populates="like")
+        
 
     
