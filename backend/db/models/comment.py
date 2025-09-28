@@ -13,7 +13,7 @@ class Comment(Base):
     content:Mapped[str] = mapped_column(Text)
     created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP, server_default=func.now())
 
-# # FOREIGN KEY (user_id) REFERENCES user(id) on delete cascade,
-# user:Mapped["User"]=relationship("User", back_populates="comment")
+# # FOREIGN KEY (user_id) REFERENCES users(id) on delete cascade,
+# users:Mapped["User"]=relationship("User", back_populates="comment")
 # # FOREIGN KEY (review_id) REFERENCES review(id) on delete cascade
 # review:Mapped["Review"]=relationship("Review", back_populates="comment")

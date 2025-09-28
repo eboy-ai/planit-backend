@@ -1,0 +1,44 @@
+from pydantic import BaseModel, Field
+from datetime import datetime, timezone
+
+##ReviewBase
+class ReviewBase(BaseModel):
+    title: str
+    content:str
+    rating: int
+
+#Create
+class ReviewCreate(ReviewBase):
+    pass
+
+#Update
+class ReviewUpdate(BaseModel):
+    title: str|None = None
+    content:str|None = None
+    rating: int|None = None
+
+#Read
+class ReviewInDB(ReviewBase):
+    review_id: int
+    user_id:int
+    created_at:datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    #orm->pydantic
+    class Config:
+        from_attributes = True
+    
+class ReviewRead(ReviewInDB):
+        username: str  #JOIN
+        like_count: int  #출력 전용 필드, DB/ORM없음 ,count()로 계산 ->조회전용
+
+##Like
+class LikeCreate(BaseModel):
+     review_id: int
+
+#Like응답 (user_id는 JWT에서 추출)
+class LikeResponse(BaseModel):
+     review_id: int
+     like_count: int  #출력 전용 필드, DB/ORM없음 ,count()로 계산->좋아요토글
+                    #버튼 클릭시 최신값 업데이트
+
+  
