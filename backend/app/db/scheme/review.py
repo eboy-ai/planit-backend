@@ -40,6 +40,6 @@ class LikeCreate(BaseModel):
 class LikeResponse(BaseModel):
      review_id: int
      like_count: int  #출력 전용 필드, DB/ORM없음 ,count()로 계산->좋아요토글
-                    #버튼 클릭시 최신값 업데이트
+     liked: bool               #버튼 클릭시 최신값 업데이트
 
   

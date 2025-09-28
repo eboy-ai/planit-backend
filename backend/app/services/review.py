@@ -2,8 +2,8 @@ from fastapi import HTTPException,status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from app.db.models import Review
-from app.db.scheme.review import ReviewCreate,  ReviewUpdate
-from app.db.crud import ReviewCrud
+from app.db.scheme.review import ReviewCreate,  ReviewUpdate, LikeResponse
+from app.db.crud import ReviewCrud, LikeCrud
 from sqlalchemy import select
 from typing import Optional
 
@@ -78,5 +78,15 @@ class ReviewService:
 
 class LikeService:
     @staticmethod
-    async def create(db:AsyncSession, user_id:int, review_id:int):
-        pass
+    async def toggle(db:AsyncSession, user_id:int, review_id:int):
+        if await LikeCrud.exists(db,user_id,review_id):
+            await LikeCrud.delete_id(db,user_id,review_id)
+            await db.commit()
+            liked = False
+        else:
+            await LikeCrud.create(db,user_id,review_id)
+            await db.commit()
+            liked = True
+        
+        count = await LikeCrud.count_by_review(db,review_id)
+        return LikeResponse(review_id=review_id,like_count=count,liked=liked)

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db.models import Review
+from app.db.models import Review, Like
 from app.db.scheme.review import ReviewCreate, ReviewUpdate
-from sqlalchemy import select, or_, desc
+from sqlalchemy import select, or_, desc, func
 from typing import Optional
 
 class ReviewCrud:
@@ -72,5 +72,40 @@ class ReviewCrud:
         return False
 
 class LikeCrud:
-    pass
+    @staticmethod
+    async def exists(db:AsyncSession, user_id:int, review_id:int) -> bool:
+        result = await db.execute(
+            select(Like).where(Like.user_id == user_id,
+                               Like.review_id == review_id))
+        if result.scalar_one_or_none():
+            return True
+        else: 
+            return False
+
+    @staticmethod
+    async def create(db:AsyncSession, user_id:int, review_id:int):
+        like = Like(user_id=user_id,review_id=review_id)
+        db.add(like)
+        await db.flush()
+        return like
     
+    @staticmethod
+    async def delete_id(db:AsyncSession, user_id:int, review_id:int):
+        result = await db.execute(
+            select(Like).where(Like.user_id == user_id,
+                               Like.review_id == review_id))
+        like = result.scalar_one_or_none()
+
+        if like:
+            await db.delete(like)
+            await db.flush()
+            return True
+        return False
+
+    #좋아요 개수 조회
+    #(user_id,review_id)
+    @staticmethod
+    async def count_by_review(db:AsyncSession, review_id:int):
+        result = await db.execute(select(func.count()).where(Like.review_id == review_id))                                       
+        return result.scalar_one() or 0
+
