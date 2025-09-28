@@ -31,6 +31,7 @@ class ReviewRead(ReviewInDB):
         username: str  #JOIN
         like_count: int  #출력 전용 필드, DB/ORM없음 ,count()로 계산 ->조회전용
 
+
 ##Like
 class LikeCreate(BaseModel):
      review_id: int
