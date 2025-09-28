@@ -3,9 +3,9 @@ from datetime import datetime, timezone
 
 ##ReviewBase
 class ReviewBase(BaseModel):
-    title: str
-    content:str
-    rating: int
+    title: str = Field(..., max_length=255, min_length=1)
+    content:str = Field(...,min_length=1)
+    rating: int = Field(..., ge=1, le=5)
 
 #Create
 class ReviewCreate(ReviewBase):

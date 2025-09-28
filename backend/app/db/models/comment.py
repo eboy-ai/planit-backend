@@ -5,7 +5,7 @@ from typing import Optional
 from datetime import datetime
 
 class Comment(Base):
-    __tablename__ = 'comment'
+    __tablename__ = 'comments'
 
     id:Mapped[int] = mapped_column(primary_key=True, index=True)
     user_id:Mapped[int] = mapped_column(BigInteger, nullable=False)
@@ -14,6 +14,6 @@ class Comment(Base):
     created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP, server_default=func.now())
 
 # # FOREIGN KEY (user_id) REFERENCES users(id) on delete cascade,
-# users:Mapped["User"]=relationship("User", back_populates="comment")
+# users:Mapped["User"]=relationship("User", back_populates="comments")
 # # FOREIGN KEY (review_id) REFERENCES review(id) on delete cascade
-# review:Mapped["Review"]=relationship("Review", back_populates="comment")
+# review:Mapped["Review"]=relationship("Review", back_populates="comments")

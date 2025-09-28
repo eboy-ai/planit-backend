@@ -2,9 +2,10 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 # from fastapi.concurrency import asynccontextmanager
 
-from db.database import async_engine, Base
-import test
-import db.model.review
+from app.db.database import async_engine, Base
+from app.db import models
+
+# from app.routers import init_routers
 
 from dotenv import load_dotenv
 
