@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db.models import Comment
-from app.db.scheme.comment import CommentCreate, CommentUpdate, CommentRead
+from app.db.model import Comment
+from app.db.schema.comment import CommentCreate, CommentUpdate, CommentRead
 from sqlalchemy import select, or_, desc, func
 from typing import Optional
 

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
-from db.database import get_db
-from db.models import Review
+from app.db.database import get_db
+from app.db.model import Review
 
 from sqlalchemy.ext.asyncio import AsyncSession
 

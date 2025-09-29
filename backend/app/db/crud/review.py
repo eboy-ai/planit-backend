@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db.models import Review, Like
-from app.db.scheme.review import ReviewCreate, ReviewUpdate
+from app.db.model import Review, Like
+from app.db.schema.review import ReviewCreate, ReviewUpdate
 from sqlalchemy import select, or_, desc, func
 from typing import Optional
 
