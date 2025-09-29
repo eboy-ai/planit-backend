@@ -63,6 +63,11 @@ class TripService:
         new_trip_day = await crud_trip.create_trip_day(db, trip_day)
         return new_trip_day
     
+    # 특정 여행의 모든 일자별 여행 계획 조회(Read)
+    async def get_trip_days_by_trip(self, db: AsyncSession, trip_id: int) -> List[TripDay]:
+        trip_days = await crud_trip.get_trip_days_by_trip(db, trip_id)
+        return trip_days
+    
     ## 3. 세부 일정(Schedule) 관련 서비스 메서드
 
     # 세부 일정 생성(Create)

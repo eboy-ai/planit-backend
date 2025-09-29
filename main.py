@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+from app.routers import trip_router, city_router
 # from fastapi.concurrency import asynccontextmanager
 
 from app.db.database import async_engine, Base
@@ -19,3 +20,6 @@ async def lifespan(app:FastAPI):
     await async_engine.dispose()
 
 app = FastAPI(lifespan=lifespan)
+
+app.include_router(trip_router.router)
+app.include_router(city_router.router)
