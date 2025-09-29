@@ -12,7 +12,7 @@ class Review(Base):
     trip_id:Mapped[int] = mapped_column(BigInteger, nullable=False)
     title:Mapped[str] = mapped_column(String(255),nullable=False)
     content:Mapped[str] = mapped_column(Text, nullable=False)
-    rating:Mapped[int]
+    rating:Mapped[int] = mapped_column(nullable=False)
     created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP, server_default=func.now())
 
     # # FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,

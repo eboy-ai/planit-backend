@@ -5,7 +5,8 @@ from datetime import datetime, timezone
 class ReviewBase(BaseModel):
     title: str = Field(..., max_length=255, min_length=1)
     content:str = Field(...,min_length=1)
-    rating: int = Field(..., ge=1, le=5)
+    rating:int = Field(..., ge=1, le=5)
+    trip_id:int = Field(...,ge=1)
 
 #Create
 class ReviewCreate(ReviewBase):
@@ -16,21 +17,23 @@ class ReviewUpdate(BaseModel):
     title: str|None = None
     content:str|None = None
     rating: int|None = None
+    trip_id: int|None = None
 
 #Read
 class ReviewInDB(ReviewBase):
-    review_id: int
+    id: int = Field(..., alias="review_id")
     user_id:int
     created_at:datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     #orm->pydantic
     class Config:
         from_attributes = True
+        populate_by_name =True
     
-class ReviewRead(ReviewInDB):
-        username: str  #JOIN
-        like_count: int  #출력 전용 필드, DB/ORM없음 ,count()로 계산 ->조회전용
-
+class ReviewRead(ReviewInDB):        
+        username: str | None = None #JOIN 후 None삭제
+        like_count: int = 0 #출력 전용 필드, DB/ORM없음 ,count()로 계산 ->조회전용
+        trip_id: int
 
 ##Like
 class LikeCreate(BaseModel):

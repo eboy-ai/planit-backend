@@ -18,8 +18,9 @@ async def get_db():
     try:
         session = AsyncsessionLocal()
         yield session
-    except:
-        pass
+    except Exception as e:
+        print("db error:",e)
+        raise
     finally:
         if session:
             await session.close()
