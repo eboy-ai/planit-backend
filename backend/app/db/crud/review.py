@@ -106,6 +106,6 @@ class LikeCrud:
     #(user_id,review_id)
     @staticmethod
     async def count_by_review(db:AsyncSession, review_id:int):
-        result = await db.execute(select(func.count()).where(Like.review_id == review_id))                                       
+        result = await db.execute(select(func.count()).select_from(Like).where(Like.review_id == review_id))                                       
         return result.scalar_one() or 0
 

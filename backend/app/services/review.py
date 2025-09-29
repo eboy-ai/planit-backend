@@ -47,7 +47,7 @@ class ReviewService:
 
     #Update
     @staticmethod
-    async def update_review_by_id(db:AsyncSession,review_id:int, review:ReviewUpdate, user_id:int):
+    async def update_review_by_id(db:AsyncSession, review:ReviewUpdate, review_id:int, user_id:int):
                
         db_review = await ReviewCrud.get_id(db,review_id)
         if not db_review:

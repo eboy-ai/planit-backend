@@ -28,7 +28,7 @@ class ReviewInDB(ReviewBase):
     #orm->pydantic
     class Config:
         from_attributes = True
-        populate_by_name =True
+        populate_by_name =True # id - review_id alias 호환성
     
 class ReviewRead(ReviewInDB):        
         username: str | None = None #JOIN 후 None삭제
