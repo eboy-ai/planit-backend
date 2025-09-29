@@ -3,6 +3,7 @@ from sqlalchemy import BigInteger,String, Text, TIMESTAMP, func, ForeignKey
 from ..database import Base
 from typing import Optional
 from datetime import datetime
+from app.db.model.trip import Trip
 
 class Review(Base):
     __tablename__ ='review'
@@ -18,7 +19,8 @@ class Review(Base):
     # # FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     # users:Mapped["User"]=relationship("User", back_populates="review")
     # # FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
-    # trip:Mapped["Trip"]=relationship("Trip", back_populates="review")
+    # trip:Mapped["Trip"]=relationship("Trip", back_populates="review") # cascade="all, delete" orm level 
+    #vs ForeignKey(ondelete="CASCADE")
 
 #like
 class Like(Base):

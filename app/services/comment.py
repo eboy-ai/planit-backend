@@ -34,6 +34,13 @@ class CommentService:
         db_comment = await CommentCrud.get_all(db,review_id,search,limit,offset)
 
         return db_comment
+    
+    @staticmethod
+    async def get_id(db: AsyncSession, comment_id: int):
+        db_comment = await CommentCrud.get_id(db, comment_id)
+        if not db_comment:
+            raise HTTPException(status_code=404, detail="댓글을 찾을 수 없습니다")
+        return db_comment
 
     #Update
     @staticmethod
@@ -53,15 +60,17 @@ class CommentService:
 
     #Delete
     @staticmethod
-    async def delete_commnet_by_id(db:AsyncSession, comment_id:int,user_id:int):
+    async def delete_comment_by_id(db:AsyncSession, comment_id:int,user_id:int):
         db_comment = await db.execute(select(Comment).where(Comment.id==comment_id))
-        comment = db_comment.scalar_one_or_none()
-        
+        comment = db_comment.scalar_one_or_none()        
 
         if not comment:
             raise HTTPException(status_code=404, detail='댓글없음')
+        
+        if comment.user_id !=user_id:
+            raise HTTPException(status_code=403, detail='삭제권한없음')
 
-        deleted_comment = await CommentCrud.delete_by_id(db,comment_id)
+        deleted_comment = await CommentCrud.delete_by_id(db,comment_id,user_id)
         if deleted_comment:            
             await db.commit()            
-        return {'detail':'댓글삭제됨'}
+            return {'detail':'댓글삭제됨'}

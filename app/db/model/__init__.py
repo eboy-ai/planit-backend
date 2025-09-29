@@ -7,3 +7,8 @@ from .places import Place
 from .travel_types import TravelType
 from .weather import Weather
 from .city_weathers import CityWeather
+
+#review
+from .comment import Comment
+from .review import Like, Review
+from .photo import Photo

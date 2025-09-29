@@ -26,5 +26,6 @@ class CommentInDB(CommentBase):
 
 #Read(Response전용)
 class CommentRead(CommentInDB):
-    username: str #JOIN결과
+    pass
+    # username: str #JOIN결과
     

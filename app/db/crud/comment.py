@@ -18,10 +18,15 @@ class CommentCrud:
         db.add(new_comment)
         await db.flush()
         return new_comment
+    
+    @staticmethod
+    async def get_id(db:AsyncSession, comment_id:int) -> Optional[Comment]:
+        return await db.get(Comment, comment_id)
 
     @staticmethod
     async def get_all(db:AsyncSession,
-                      review_id:int,                      
+                      review_id:int, 
+                      search:Optional[str]=None,                     
                       limit:int=10,
                       offset:int = 0
                       ):

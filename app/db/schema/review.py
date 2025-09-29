@@ -6,7 +6,7 @@ class ReviewBase(BaseModel):
     title: str = Field(..., max_length=255, min_length=1)
     content:str = Field(...,min_length=1)
     rating:int = Field(..., ge=1, le=5)
-    trip_id:int = Field(...,ge=1)
+    # trip_id:int = Field(...,ge=1)
 
 #Create
 class ReviewCreate(ReviewBase):
