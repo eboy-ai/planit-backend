@@ -36,7 +36,7 @@ class CommentCrud:
     
     #Update(review_id)
     @staticmethod
-    async def update_by_id(db:AsyncSession, comment_id:int, comment:CommentUpdate, user_id:int) -> Optional[Comment]:
+    async def update_by_id(db:AsyncSession, comment:CommentUpdate, comment_id:int, user_id:int) -> Optional[Comment]:
         db_comment = await db.get(Comment, comment_id)
         if db_comment and db_comment.user_id == user_id:
             update_comment = comment.model_dump(exclude_unset=True) 
