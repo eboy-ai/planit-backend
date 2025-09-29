@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from app.db.database import async_engine, Base
 from app.db import models
+from app import routers
 
 # from app.routers import init_routers
 
@@ -20,3 +21,5 @@ async def lifespan(app:FastAPI):
     await async_engine.dispose()
 
 app = FastAPI(lifespan=lifespan)
+
+app.include_router(routers)
