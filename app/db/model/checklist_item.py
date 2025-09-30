@@ -11,7 +11,7 @@ class ChecklistItem(Base):
     item_name: Mapped[str] = mapped_column(String(255), nullable=False)  
     is_checked: Mapped[bool] = mapped_column(nullable=False, default=False)  
 
-    trip = relationship("Trip", back_populates="checklist_item")
+    # trip = relationship("Trip", back_populates="checklist_item")
 
 # CREATE TABLE checklist_item (
 #     id BIGINT PRIMARY KEY AUTO_INCREMENT,

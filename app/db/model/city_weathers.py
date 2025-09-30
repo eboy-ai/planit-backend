@@ -8,8 +8,8 @@ class CityWeather(Base):
     city_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)  
     weather_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)  
 
-    city = relationship("City", back_populates="city_weathers")
-    weather = relationship("Weather", back_populates="city_weathers")
+    # city = relationship("City", back_populates="city_weathers")
+    # weather = relationship("Weather", back_populates="city_weathers")
 
 # CREATE TABLE city_weathers (
 #     city_id BIGINT NOT NULL,

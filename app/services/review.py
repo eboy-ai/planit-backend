@@ -78,7 +78,7 @@ class ReviewService:
 
 class LikeService:
     @staticmethod
-    async def toggle(db:AsyncSession, user_id:int, review_id:int):
+    async def toggle(db:AsyncSession, user_id:Optional[int], review_id:int):
         if await LikeCrud.exists(db,user_id,review_id):
             await LikeCrud.delete_id(db,user_id,review_id)
             await db.commit()
@@ -90,3 +90,10 @@ class LikeService:
         
         count = await LikeCrud.count_by_review(db,review_id)
         return LikeResponse(review_id=review_id,like_count=count,liked=liked)
+                             #like_count = 좋아요 갯수, liked= 로그인한 유저 좋아요 토글
+    #로그인 안해도 조회
+    @staticmethod
+    async def count_likes(db:AsyncSession, review_id:int):        
+        count = await LikeCrud.count_by_review(db,review_id)
+        return LikeResponse(review_id=review_id,like_count=count,liked=False)
+                             
