@@ -9,7 +9,7 @@ class TravelType(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, index=True) 
     type_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)  
 
-    place = relationship("Place", back_populates="travel_types")
+    # place = relationship("Place", back_populates="travel_types")
 
 # CREATE TABLE travel_types (
 #     id BIGINT PRIMARY KEY AUTO_INCREMENT,

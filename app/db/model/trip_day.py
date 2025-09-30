@@ -1,13 +1,13 @@
 from app.db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import BigInteger
+from sqlalchemy import BigInteger, ForeignKey
 from datetime import datetime
 
 class TripDay(Base):
     __tablename__ = "trip_day"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, index=True) 
-    trip_id: Mapped[int] = mapped_column(BigInteger, nullable=False) 
+    trip_id: Mapped[int] = mapped_column(ForeignKey("trip.id"), nullable=False) 
     day_date: Mapped[datetime] = mapped_column(nullable=False)  
     day_sequence: Mapped[int] = mapped_column(nullable=False)  # n일차 표시용
 
