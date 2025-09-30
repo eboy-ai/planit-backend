@@ -4,20 +4,20 @@ from app.db.schema.photo import PhotoCreate
 from sqlalchemy import select, or_, desc, func
 from typing import Optional
 
+
 #사진은 로컬폴더나, 외부환경(외부스토리지)에 저장
 
 
 class PhotoCrud:
     @staticmethod
-    async def create(db:AsyncSession,
-                     user_id:int, 
+    async def create(db:AsyncSession,                      
                      review_id:int, 
-                     img_url:str):
-
-        photo = Photo(user_id=user_id, review_id=review_id,img_url=img_url)
-        db.add(photo)
+                     filename:str,
+                     data:bytes):    
+        db_photo = Photo(review_id=review_id,filename=filename,data=data)
+        db.add(db_photo)
         await db.flush()
-        return photo
+        return db_photo
     
     @staticmethod
     async def get_all(db:AsyncSession, review_id:int):

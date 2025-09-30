@@ -2,7 +2,8 @@ from pydantic import BaseModel, Field
 from datetime import datetime, timezone
 
 class PhotoBase(BaseModel):
-    image_url: str
+    filename:str
+    
 
 #Create
 class PhotoCreate(PhotoBase):
@@ -17,7 +18,7 @@ class PhotoInDB(PhotoBase):
     created_at: datetime 
 
     class Config:
-        from_attributes = True
+        from_attributes = True #orm_mode = True
 
 class PhotoRead(PhotoInDB):
     pass
