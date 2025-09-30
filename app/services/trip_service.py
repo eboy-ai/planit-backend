@@ -78,6 +78,13 @@ class TripService:
         new_schedule = await crud_trip.create_schedule(db, schedule)
         return new_schedule
     
+    # 세부 일정 조회(Read)
+    async def get_schedule(self, db: AsyncSession, schedule_id: int) -> Optional[Schedule]:
+        schedule = await crud_trip.get_schedule(db, schedule_id)
+        if not schedule:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="세부 일정을 찾을 수 없습니다.")
+        return schedule
+    
     # 특정 일자별 여행 계획의 모든 세부 일정 조회(Read)
     async def get_schedules_by_trip_day(self, db: AsyncSession, trip_day_id: int) -> List[Schedule]:
         schedules = await crud_trip.get_schedules_by_trip_day(db, trip_day_id)
@@ -117,6 +124,13 @@ class TripService:
         if not deleted_item:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="체크리스트 항목을 찾을 수 없습니다.")
         return deleted_item
+    
+    # 체크리스트 항목 조회(Read)
+    async def get_checklist_item(self, db: AsyncSession, item_id: int) -> Optional[ChecklistItem]:
+        item = await crud_trip.get_checklist_item(db, item_id)
+        if not item:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="체크리스트 항목을 찾을 수 없습니다.")
+        return item
     
     # 특정 여행의 모든 체크리스트 항목 조회(Read)
     async def get_checklist_items_by_trip(self, db: AsyncSession, trip_id: int) -> List[ChecklistItem]:
