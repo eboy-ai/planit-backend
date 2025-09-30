@@ -13,7 +13,7 @@ class Photo(Base):
     filename:Mapped[str] = mapped_column(String(255),nullable=False)
     data:Mapped[bytes] = mapped_column(LONGBLOB,nullable=False)
     created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP, server_default=func.now()) 
-    #사진생성시각 추가
+    #FK, cascade 추가필요
 
     # FOREIGN KEY (review_id) REFERENCES review(id) ON DELETE CASCADE
     # review:Mapped["Review"]=relationship("Review", back_populates="photos")

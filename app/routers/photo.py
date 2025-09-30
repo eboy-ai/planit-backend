@@ -12,11 +12,15 @@ from app.db.schema.photo import PhotoRead
 import io
 
 
-router = APIRouter(prefix='/photos',tags=['Photo'])
+router = APIRouter(prefix='/reviews/{review_id}/photos',tags=['Photo'])
 
 # 사진은 api 흐름이 반대임 (router->service->crud->scheme->orm->DB)
-@router.post('/upload', response_model=PhotoRead)
+@router.post('/', response_model=PhotoRead)
 async def upload_photo(review_id:int, 
                        file:UploadFile = File(...),
                        db:AsyncSession=Depends(get_db)):
     return await PhotoService.create_image(db,review_id,file)
+
+@router.get('/', response_model=PhotoRead)
+async def get_photo():
+    pass
