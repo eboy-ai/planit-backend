@@ -32,7 +32,7 @@ class PhotoService:
         
         #파일 확장자 mime-type
     
-    #사진 한개(대표이미지용) 조회
+    #사진 한개(대표이미지/원본조회) 조회
     @staticmethod
     async def get_photo(db:AsyncSession,review_id:int,photo_id:int):        
         query = select(Photo).where(Review.id == review_id,
@@ -42,8 +42,15 @@ class PhotoService:
         db_photo = result.scalar_one_or_none()
         return db_photo
     
-    # #원본이미지 조회
-    # @staticmethod
-    # async def get_image_raw(db:AsyncSession, review_id:int, photo_id:int):
-    #     query = select(Photo).where(Review.id == review_id,
-    #                                 Photo.id == photo_id)
+    #사진 삭제
+    @staticmethod
+    async def delete_photo_by_id(db:AsyncSession,photo_id:int,user_id:int)->bool:
+        db_photo = await PhotoCrud.get_photo_id(db,photo_id)
+        if not db_photo:
+            raise HTTPException(status_code=404, detail='사진없음')
+        
+        deleted_photo = await PhotoCrud.delete_by_id(db,photo_id,user_id)
+        if deleted_photo:
+            await db.commit()
+        return deleted_photo
+        

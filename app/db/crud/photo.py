@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db.model import Photo
+from app.db.model import Photo, Review
 from app.db.schema.photo import PhotoCreate
 from sqlalchemy import select, or_, desc, func
 from typing import Optional
@@ -35,12 +35,16 @@ class PhotoCrud:
     
 
     @staticmethod
-    async def delete_by_id(db:AsyncSession, photo_id:int, user_id:int):
+    async def delete_by_id(db:AsyncSession, photo_id:int, user_id:int)->bool:
         photo = await db.get(Photo, photo_id)
-        if photo and photo.user_id == user_id:
-            #파일삭제
-            await db.delete(photo)
-            await db.flush()
-            return True
-        return False
+        if not photo :        
+            return False
+        #photo_id를 입력한 photo객체의 삭제할 review_id를 Review테이블에서져와야함
+        review = await db.get(Review, photo.review_id) 
+        if not review or review.user_id != user_id:
+            return False
+        await db.delete(photo) #선택한 photo_id의 row삭제
+        await db.flush()
+        return True 
+    
     
