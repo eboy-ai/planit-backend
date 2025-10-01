@@ -12,6 +12,7 @@ class Photo(Base):
     review_id:Mapped[int] = mapped_column(BigInteger, nullable=False) #ForeignKey("review.id", ondelete="CASCADE"),
     filename:Mapped[str] = mapped_column(String(255),nullable=False)
     data:Mapped[bytes] = mapped_column(LONGBLOB,nullable=False)
+    content_type:Mapped[str] =mapped_column(String(50),nullable=False)
     created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP, server_default=func.now()) 
     #FK, cascade 추가필요
 

@@ -9,21 +9,30 @@ from typing import Optional
 
 
 class PhotoCrud:
+    #photo_id조회 - 대표사진 하나 조회용 (review_id가 필요한가?)
+    @staticmethod
+    async def get_photo_id(db:AsyncSession,photo_id:int):
+        return db.get(Photo, photo_id)
+
     @staticmethod
     async def create(db:AsyncSession,                      
                      review_id:int, 
                      filename:str,
-                     data:bytes):    
-        db_photo = Photo(review_id=review_id,filename=filename,data=data)
+                     data:bytes,
+                     content_type:str):    
+        db_photo = Photo(review_id=review_id,filename=filename,data=data,content_type=content_type)
         db.add(db_photo)
         await db.flush()
         return db_photo
     
     @staticmethod
     async def get_all(db:AsyncSession, review_id:int):
-        query = select(Photo).where(Photo.review_id==review_id).order_by(desc(Photo.created_at))
+        query = select(Photo).where(Photo.review_id==review_id)
         result = await db.execute(query)
-        return result.scalars().all()
+        photos= result.scalars().all()
+        print('crud return:', photos, type(photos))
+        return photos
+    
 
     @staticmethod
     async def delete_by_id(db:AsyncSession, photo_id:int, user_id:int):

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import datetime, timezone
-
+from typing import Optional
 class PhotoBase(BaseModel):
     filename:str
     
@@ -13,13 +13,13 @@ class PhotoCreate(PhotoBase):
 
 #Read
 class PhotoInDB(PhotoBase):
-    id:int
+    id:int = Field(...,alias="photo_id")
     review_id:int
-    created_at: datetime 
+    created_at: Optional[datetime]
 
     class Config:
-        from_attributes = True #orm_mode = True
-
+        from_attributes = True 
+        populate_by_name =True
 class PhotoRead(PhotoInDB):
     pass
     
