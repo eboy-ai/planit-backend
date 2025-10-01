@@ -1,6 +1,6 @@
 from app.db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, BigInteger
+from sqlalchemy import String, BigInteger, ForeignKey
 from datetime import datetime
 from typing import Optional
 
@@ -8,15 +8,16 @@ class Trip(Base):
     __tablename__ = "trip"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, index=True) 
-    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
-    city_id: Mapped[int] = mapped_column(BigInteger, nullable=False) 
+    # user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    city_id: Mapped[int] = mapped_column(ForeignKey("cities.id"), nullable=False) 
     title: Mapped[str] = mapped_column(String(100), nullable=False)  
     start_date: Mapped[datetime] = mapped_column(nullable=False)  
     end_date: Mapped[Optional[datetime]] = mapped_column(nullable=True)  
 
-    user = relationship("User", back_populates="trip")
+    # user = relationship("User", back_populates="trip")
     city = relationship("City", back_populates="trip")
     trip_day = relationship("TripDay", back_populates="trip")
+    checklist_item = relationship("ChecklistItem", back_populates="trip")
 
 # CREATE TABLE trip (
 #     id BIGINT PRIMARY KEY AUTO_INCREMENT,

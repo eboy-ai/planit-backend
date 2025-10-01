@@ -62,6 +62,11 @@ async def create_trip_day(db: AsyncSession, trip_day: TripDayCreate) -> TripDay:
     await db.refresh(db_trip_day)
     return db_trip_day
 
+# 일자별 여행 계획 조회(Read)
+async def get_trip_day(db: AsyncSession, trip_day_id: int) -> Optional[TripDay]:
+    result = await db.execute(select(TripDay).filter(TripDay.id == trip_day_id))
+    return result.scalars().first()
+
 # 특정 여행의 모든 일자별 여행 계획 조회(Read)
 async def get_trip_days_by_trip(db: AsyncSession, trip_id: int) -> List[TripDay]:
     result = await db.execute(select(TripDay).filter(TripDay.trip_id == trip_id))

@@ -12,6 +12,7 @@ class City(Base):
 
     trip = relationship("Trip", back_populates="city")
     place = relationship("Place", back_populates="city")
+    city_weathers = relationship("CityWeather", back_populates="city")
 
 # CREATE TABLE cities (
 #     id BIGINT PRIMARY KEY AUTO_INCREMENT,
