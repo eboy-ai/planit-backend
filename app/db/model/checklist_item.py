@@ -1,13 +1,13 @@
 from app.db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, BigInteger
+from sqlalchemy import String, BigInteger, ForeignKey
 from typing import Optional
 
 class ChecklistItem(Base):
     __tablename__ = "checklist_item"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, index=True) 
-    trip_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)  # 수정됨 : trip_day에서 trip으로 연결 수정 
+    trip_id: Mapped[Optional[int]] = mapped_column(ForeignKey("trip.id"), nullable=True)  # 수정됨 : trip_day에서 trip으로 연결 수정 
     item_name: Mapped[str] = mapped_column(String(255), nullable=False)  
     is_checked: Mapped[bool] = mapped_column(nullable=False, default=False)  
 

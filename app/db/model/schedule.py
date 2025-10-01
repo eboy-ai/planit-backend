@@ -1,6 +1,6 @@
 from app.db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, BigInteger, Time
+from sqlalchemy import String, BigInteger, Time, ForeignKey
 from datetime import datetime, time
 from typing import Optional
 
@@ -8,8 +8,8 @@ class Schedule(Base):
     __tablename__ = "schedule"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, index=True) 
-    trip_day_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)  
-    place_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)  
+    trip_day_id: Mapped[Optional[int]] = mapped_column(ForeignKey("trip_day.id"), nullable=True)  
+    place_id: Mapped[Optional[int]] = mapped_column(ForeignKey("places.id"), nullable=True)  
     schedule_content: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)  
     start_time: Mapped[Optional[time]] = mapped_column(Time, nullable=True)  
     end_time: Mapped[Optional[time]] = mapped_column(Time, nullable=True)  
