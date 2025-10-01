@@ -6,6 +6,7 @@ from datetime import datetime
 from app.db.crud import user as user_crud
 
 
+#회원가입
 async def register_user(db: AsyncSession, username: str, email: str, password: str):
     # 중복 이메일 체크
     existing_email = await user_crud.get_user_by_email(db, email)
@@ -26,7 +27,7 @@ async def register_user(db: AsyncSession, username: str, email: str, password: s
     hashed_pw = hash_password(password)
     return await user_crud.create_user(db, username, email, hashed_pw)
 
-
+#로근인
 async def login_user(db: AsyncSession, email: str, password: str) -> str | None:
     user = await user_crud.get_user_by_email(db, email)
     if not user or not verify_password(password, user.password):
@@ -36,3 +37,30 @@ async def login_user(db: AsyncSession, email: str, password: str) -> str | None:
     await db.refresh(user)
 
     return create_access_token(data={"sub": str(user.id)})
+
+
+#유저 정보 조회(개인)
+async def get_user(db: AsyncSession, email:str):
+    user = await user_crud.get_user_by_email(db,email)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User Not Found"
+        )
+    
+    return user
+
+
+#모든 유저 정보 조회
+async def read_all_user(db: AsyncSession):
+    users = await user_crud.get_all_user(db)
+    return users
+#유저 삭제 
+async def delete_user(db: AsyncSession, user_id: int):
+    is_deleted = await user_crud.delete_user(db, user_id)
+    if not is_deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id {user_id} not found."
+        )
+    return {"message": "User deleted successfully"}

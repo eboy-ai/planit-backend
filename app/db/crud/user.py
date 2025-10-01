@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.db.models.user import User
-from typing import Optional
+from typing import Optional , List
 
 
 #유저 생성
@@ -53,6 +53,7 @@ async def update_user(db: AsyncSession,
     
     return user
 
+#유저 삭제 
 async def delete_user(db:AsyncSession, user_id:str) -> bool:
     result= await db.execute(select(User).where(User.id == user_id))
     user= result.scalar_one_or_none()
@@ -63,3 +64,9 @@ async def delete_user(db:AsyncSession, user_id:str) -> bool:
     await db.delete(user)
     await db.commit()
     return True
+
+#모든 유저 조회
+async def get_all_user(db:AsyncSession) -> List[User]:
+    result = await db.execute(select(User))
+    return result.scalars().all()
+    
