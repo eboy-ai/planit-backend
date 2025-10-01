@@ -27,7 +27,6 @@ async def register_user(db: AsyncSession, username: str, email: str, password: s
     return await user_crud.create_user(db, username, email, hashed_pw)
 
 
-# ✅ 로그인
 async def login_user(db: AsyncSession, email: str, password: str) -> str | None:
     user = await user_crud.get_user_by_email(db, email)
     if not user or not verify_password(password, user.password):

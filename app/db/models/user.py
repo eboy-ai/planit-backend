@@ -1,6 +1,6 @@
 # app/db/models/user.py
 from sqlalchemy import Column, Integer, String,ForeignKey
-from app.db.base_class import Base # Base는 declarative_base()로 정의된 클래스라고 가정
+from app.db.database import Base # Base는 declarative_base()로 정의된 클래스라고 가정
 from sqlalchemy.orm import relationship
 
 
@@ -13,7 +13,7 @@ class User(Base):
     password = Column(String(255), nullable=False) 
     group_id = Column(
         Integer,
-        ForeignKey("groups.id"), 
+        ForeignKey("GROUPT.id"), 
         nullable=False,
         default=1 #1이 일반 사용자라는 가장하에 작성
     )

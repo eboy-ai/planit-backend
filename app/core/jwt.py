@@ -2,9 +2,10 @@ from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from app.core.settings import settings
 from fastapi import HTTPException, status
+from typing import Optional
 
 #토큰 생성
-def create_access_token(data:dict, expires_time:int = None):
+def create_access_token(data:dict, expires_time: Optional[int] = 15):
   exp=datetime.utcnow() +timedelta(minutes=expires_time)
   data["exp"]=exp
   return jwt.encode(data, settings.secret_key, algorithm=settings.algorithm)

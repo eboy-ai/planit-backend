@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship # 관계 설정을 위해 임포트
-from app.db.base_class import Base 
+from app.db.database import Base 
 
 class Group(Base):
-    __tablename__ = "groups" 
+    __tablename__ = "GROUPT" 
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), unique=True, index=True, nullable=False)
