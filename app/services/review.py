@@ -92,8 +92,11 @@ class LikeService:
         return LikeResponse(review_id=review_id,like_count=count,liked=liked)
                              #like_count = 좋아요 갯수, liked= 로그인한 유저 좋아요 토글
     #로그인 안해도 조회
-    @staticmethod
-    async def count_likes(db:AsyncSession, review_id:int):        
+    @staticmethod 
+    async def count_likes(db:AsyncSession, review_id:int, user_id:int|None=None):        
         count = await LikeCrud.count_by_review(db,review_id)
-        return LikeResponse(review_id=review_id,like_count=count,liked=False)
+        liked=False
+        if user_id:
+            liked = await LikeCrud.exists(db,user_id,review_id)
+        return LikeResponse(review_id=review_id,like_count=count,liked=liked)
                              

@@ -12,7 +12,7 @@ class PhotoCrud:
     #photo_id조회 - 대표사진 하나 조회용 (review_id가 필요한가?)
     @staticmethod
     async def get_photo_id(db:AsyncSession,photo_id:int):
-        return db.get(Photo, photo_id)
+        return await db.get(Photo, photo_id)
 
     @staticmethod
     async def create(db:AsyncSession,                      
@@ -41,7 +41,10 @@ class PhotoCrud:
             return False
         #photo_id를 입력한 photo객체의 삭제할 review_id를 Review테이블에서져와야함
         review = await db.get(Review, photo.review_id) 
-        if not review or review.user_id != user_id:
+        #검증기능 완료후 추가
+        # if not review or review.user_id != user_id:
+        #     return False
+        if not review:
             return False
         await db.delete(photo) #선택한 photo_id의 row삭제
         await db.flush()

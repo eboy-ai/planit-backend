@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from app.routers import trip_router, city_router
 # from fastapi.concurrency import asynccontextmanager
 from app.db import model
+from app.db import models #통합필요
 from app.db.database import async_engine, Base
-import test
+
 from app.routers import router
-# from app.routers import init_routers
+
 from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=".env")
@@ -20,6 +20,8 @@ async def lifespan(app:FastAPI):
     await async_engine.dispose()
 
 app = FastAPI(lifespan=lifespan)
+
 app.include_router(router)
-app.include_router(trip_router.router)
-app.include_router(city_router.router)
+
+
+# CORS middleware 추가 필요

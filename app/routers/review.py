@@ -3,16 +3,13 @@ from app.db.database import get_db
 from app.db.model import Review
 from app.db.schema.review import ReviewCreate, ReviewRead, ReviewUpdate
 from app.services import ReviewService
-
+from app.core.tmp import get_user_id
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
 router = APIRouter(prefix='/reviews',tags=['Review'])
 
-async def get_user_id():
-    user_id = 1
-    return user_id
 # 작성한 여행계획에서 id를 가져올건지 (request body)
 #Create
 @router.post('/', response_model=ReviewRead)

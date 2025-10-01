@@ -18,7 +18,7 @@ class User(Base):
         default=1 #1이 일반 사용자라는 가장하에 작성
     )
 
-    group = relationship("Group", back_populates="users")
+    # group = relationship("Group", back_populates="users")
     
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"

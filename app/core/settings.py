@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 from pydantic import Field
 
-class Setting(BaseSettings):
+class Settings(BaseSettings):
     db_user: str = Field(..., alias="DB_USER")
     db_password: str = Field(..., alias="DB_PASSWORD")
     db_host: str = Field("localhost", alias="DB_HOST")
@@ -15,17 +15,16 @@ class Setting(BaseSettings):
 
     class Config:
         env_file = ".env"
+        extra = "allow"
+        populate_by_name = True
+        case_sensitive = True
+
+    @property
+    def tmp_db(self) -> str:
+        return f'{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}'
     
-
-settings = Setting()from pydantic_settings import BaseSettings
-from pydantic import Field
-
-class Settings(BaseSettings):
-    database_url: str = Field(...,alias="DATABASE_URL")
-
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
-
+    @property
+    def database_url(self) -> str:
+        return f'mysql+aiomysql://{self.tmp_db}'
 
 settings = Settings()

@@ -4,7 +4,7 @@ from app.db.database import get_db
 from app.db.schemas.user import UserCreate, UserResponse, UserLogin, UserUpdate, Token
 from app.services.user import register_user,login_user
 
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.post("/login", response_model=Token)

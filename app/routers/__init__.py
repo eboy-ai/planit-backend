@@ -1,17 +1,22 @@
 from fastapi import APIRouter
-
 from . import review, comment, like, photo
 from . import city_router, trip_router
-# from . import user,trip,places , ...
+from . import user
 
 router = APIRouter()
 
-# #trip
-# for module in [city_router,trip_router]:
-#     router.include_router(module.router)
-#review
+#user
+router.include_router(user.router)
+# trip  
+# trip_router: Trip, TripDay, Schedule, ChecklistItem
+# city_router: City, Place
+for module in [city_router,trip_router]:
+    router.include_router(module.router)
+
+#review : review, comment, like, photo
 for module in [review,comment,like,photo]:
     router.include_router(module.router)
+
 
 
 # gpt - 자동스캔방식
