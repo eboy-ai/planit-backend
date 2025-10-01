@@ -4,6 +4,11 @@ from app.db.schema.review import ReviewCreate, ReviewUpdate
 from sqlalchemy import select, or_, desc, func
 from typing import Optional
 
+
+class User:  
+    username = 'gildong'
+    
+
 class ReviewCrud:
 
     #Create    
@@ -23,10 +28,29 @@ class ReviewCrud:
         return new_review
     
     #Read
-    #review_id로 조회 / username,like_count,photos ->service query조회필요
+    #review_id로 조회 / 
+    #db.get- pk로만 조회가능 / db.execute (query)
     @staticmethod
     async def get_id(db:AsyncSession, review_id:int) -> Optional[Review]:
-        return await db.get(Review, review_id)
+        #user 조회후 username 수정필요
+        #리뷰객체 by_id
+        db_review = await db.get(Review, review_id)
+        if not db_review:
+            return None
+        #username
+        #연결전 하드코딩
+        db_review.username = User.username
+
+        #FK 연결후 
+        # user = await db.get(User, db_review.user_id)
+        # if user: 
+        #     db_review.username = user.username
+
+        #like_count
+        like_count= await LikeCrud.count_by_review(db,review_id)
+        db_review.like_count=like_count
+
+        return db_review
     
     #reveiw-list 조회 trip에속한 리뷰만
     @staticmethod
@@ -47,7 +71,7 @@ class ReviewCrud:
         query = query.limit(limit).offset(offset)
 
         result = await db.execute(query)
-        return result.scalars().all() #rows=result.scalars().all()
+        return result.scalars().all() #rows=result.scalars().all()       
     
     #Update(review_id)
     @staticmethod

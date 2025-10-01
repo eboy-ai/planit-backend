@@ -1,11 +1,12 @@
 from fastapi import HTTPException,status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
-from app.db.model import Review
-from app.db.schema.review import ReviewCreate, ReviewUpdate, LikeResponse
+from app.db.model import Review,Like
+from app.db.schema.review import ReviewCreate, ReviewUpdate, LikeResponse, ReviewRead
 from app.db.crud import ReviewCrud, LikeCrud
 from sqlalchemy import select
 from typing import Optional
+from sqlalchemy import select, or_, desc, func
 
 
 class ReviewService:
@@ -25,16 +26,8 @@ class ReviewService:
             raise
     
     #Read
-    #review_id로 조회(R)
-    @staticmethod
-    async def get_id(db:AsyncSession,review_id:int):
-        db_review = await ReviewCrud.get_id(db, review_id)
-
-        if not db_review:
-            raise HTTPException(status_code=404, detail="리뷰가 없습니다")
-        return db_review
     
-    #trip id에 해당하는 list조회(R)
+    #trip id에 해당하는 list조회(R) - 여행별 리뷰
     @staticmethod
     async def get_all_review(db:AsyncSession,
                       trip_id:int,
@@ -45,6 +38,13 @@ class ReviewService:
 
         return db_review
 
+    #review_id
+    @staticmethod
+    async def get_review_username(db:AsyncSession,review_id:int):
+        db_review = await ReviewCrud.get_id(db,review_id)  
+        if not db_review:
+            raise HTTPException(status_code=404, detail="리뷰가 없습니다")     
+        return db_review
     #Update
     @staticmethod
     async def update_review_by_id(db:AsyncSession, review:ReviewUpdate, review_id:int, user_id:int):
