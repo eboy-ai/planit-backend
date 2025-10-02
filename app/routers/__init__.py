@@ -4,7 +4,7 @@ from . import city_router, trip_router
 from . import user
 
 router = APIRouter()
-# #1.
+# #1.기능별 등록               1,2,3 중에 골라주세요
 # #user
 # router.include_router(user.router)
 # # trip  

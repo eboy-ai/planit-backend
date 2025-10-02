@@ -15,8 +15,8 @@ class Schedule(Base):
     end_time: Mapped[Optional[time]] = mapped_column(Time, nullable=True)  
     schedule_datetime: Mapped[datetime] = mapped_column(nullable=False)  
 
-    # trip_day = relationship("TripDay", back_populates="schedule")
-    # place = relationship("Place", back_populates="schedule")
+    trip_day = relationship("TripDay", back_populates="schedule")
+    place = relationship("Place", back_populates="schedule")
 
 # CREATE TABLE schedule (
 #     id BIGINT PRIMARY KEY AUTO_INCREMENT,
