@@ -4,7 +4,7 @@ from app.core.security import hash_password, verify_password
 from app.core.jwt import create_access_token
 from datetime import datetime
 from app.db.crud import user as user_crud
-from app.db.schemas.user import UserUpdate
+from app.db.schema.user import UserUpdate
 
 
 #회원가입

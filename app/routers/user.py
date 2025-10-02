@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException,status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_db
-from app.db.schemas.user import UserCreate, UserResponse, UserLogin, UserUpdate, Token,UserBase
+from app.db.schema.user import UserCreate, UserResponse, UserLogin, UserUpdate, Token,UserBase
 from app.services.user import register_user,login_user,delete_user,get_user, update_user, read_all_user
-from app.db.models.user import User as UserModel
+from app.db.model.user import User as UserModel
 from typing import Annotated , List
 from jose import JWTError
 from app.core.jwt import verify_access_token
