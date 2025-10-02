@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 # from fastapi.concurrency import asynccontextmanager
 from app.db import model
-from app.db import models #통합필요
 from app.db.database import async_engine, Base
 
 from app.routers import router
