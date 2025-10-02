@@ -10,7 +10,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(50), nullable=False)
     email = Column(String(100), unique=True,  nullable=False)
-    password = Column(String(255), nullable=False) 
+    password = Column(String(   255), nullable=False) 
     group_id = Column(
         Integer,
         ForeignKey("GROUPT.id"), 
@@ -22,3 +22,9 @@ class User(Base):
     
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"
+    
+    trip = relationship("Trip", back_populates="users")
+    
+    review = relationship("Review", back_populates="users")
+    comments = relationship("Comment", back_populates="users")
+    likes = relationship("Like", back_populates="users")

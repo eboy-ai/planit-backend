@@ -11,8 +11,7 @@ from fastapi.security import OAuth2PasswordBearer
 from app.db.crud import user as user_crud
 
 
-
-router = APIRouter()
+router = APIRouter(prefix='/users',tags=['User'])
 
 DB_Dependency = Annotated[AsyncSession, Depends(get_db)]
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
