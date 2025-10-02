@@ -4,22 +4,29 @@ from . import city_router, trip_router
 from . import user
 
 router = APIRouter()
+# #1.
+# #user
+# router.include_router(user.router)
+# # trip  
+# # trip_router: Trip, TripDay, Schedule, ChecklistItem
+# # city_router: City, Place
+# for module in [city_router,trip_router]:
+#     router.include_router(module.router)
 
-#user
-router.include_router(user.router)
-# trip  
-# trip_router: Trip, TripDay, Schedule, ChecklistItem
-# city_router: City, Place
-for module in [city_router,trip_router]:
+# #review : review, comment, like, photo
+# for module in [review,comment,like,photo]:
+#     router.include_router(module.router)
+
+# 2. 통합
+planit = [user,city_router,trip_router,review,comment,like,photo]
+for module in planit:
     router.include_router(module.router)
 
-#review : review, comment, like, photo
-for module in [review,comment,like,photo]:
-    router.include_router(module.router)
 
+# import importlib
+# import pkgutil
 
-
-# gpt - 자동스캔방식
+# # 3. gpt - 동적 자동스캔방식
 # for _, module_name, _ in pkgutil.iter_modules(__path__):
 #     module = importlib.import_module(f"{__name__}.{module_name}")
 #     if hasattr(module, "router"):

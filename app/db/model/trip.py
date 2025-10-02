@@ -8,16 +8,17 @@ class Trip(Base):
     __tablename__ = "trip"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, index=True) 
-    # user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     city_id: Mapped[int] = mapped_column(ForeignKey("cities.id"), nullable=False) 
     title: Mapped[str] = mapped_column(String(100), nullable=False)  
     start_date: Mapped[datetime] = mapped_column(nullable=False)  
     end_date: Mapped[Optional[datetime]] = mapped_column(nullable=True)  
 
-    # user = relationship("User", back_populates="trip")
-    # city = relationship("City", back_populates="trip")
-    # trip_day = relationship("TripDay", back_populates="trip")
-    # checklist_item = relationship("ChecklistItem", back_populates="trip")
+    users = relationship("User", back_populates="trip")
+    city = relationship("City", back_populates="trip")
+    trip_day = relationship("TripDay", back_populates="trip")
+    checklist_item = relationship("ChecklistItem", back_populates="trip")
+    review = relationship("Review", back_populates="trip") # cascade="all, delete" orm level
 
 # CREATE TABLE trip (
 #     id BIGINT PRIMARY KEY AUTO_INCREMENT,

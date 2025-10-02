@@ -1,3 +1,8 @@
+#user
+from .group import Group
+from .user import User
+
+#trip
 from .trip import Trip
 from .trip_day import TripDay
 from .schedule import Schedule

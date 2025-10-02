@@ -9,13 +9,13 @@ class Place(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, index=True) 
     city_id: Mapped[int] = mapped_column(ForeignKey("cities.id"), nullable=False) 
     place_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)  
-    # type_id: Mapped[int] = mapped_column(ForeignKey("travel_types.id"), nullable=False) 
+    type_id: Mapped[int] = mapped_column(ForeignKey("travel_types.id"), nullable=False) 
     place_intro: Mapped[Optional[str]] = mapped_column(String(4000), nullable=True)  # 수정됨: LONGTEXT -> String(4000)
     is_popular: Mapped[Optional[bool]] = mapped_column(nullable=True, default=False)  # 추가됨: 추천 장소 여부
 
-    # city = relationship("City", back_populates="place")
-    # travel_types = relationship("TravelType", back_populates="place")
-    # schedule = relationship("Schedule", back_populates="place")
+    city = relationship("City", back_populates="place")
+    travel_types = relationship("TravelType", back_populates="place")
+    schedule = relationship("Schedule", back_populates="place")
 
 # CREATE TABLE places (
 #     id BIGINT PRIMARY KEY AUTO_INCREMENT,
