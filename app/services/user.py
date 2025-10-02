@@ -4,6 +4,7 @@ from app.core.security import hash_password, verify_password
 from app.core.jwt import create_access_token
 from datetime import datetime
 from app.db.crud import user as user_crud
+from app.db.schemas.user import UserUpdate
 
 
 #회원가입
@@ -55,6 +56,7 @@ async def get_user(db: AsyncSession, email:str):
 async def read_all_user(db: AsyncSession):
     users = await user_crud.get_all_user(db)
     return users
+
 #유저 삭제 
 async def delete_user(db: AsyncSession, user_id: int):
     is_deleted = await user_crud.delete_user(db, user_id)
@@ -64,3 +66,25 @@ async def delete_user(db: AsyncSession, user_id: int):
             detail=f"User with id {user_id} not found."
         )
     return {"message": "User deleted successfully"}
+
+#유저 업데이트
+async def update_user(db: AsyncSession, user_id: int ,user_data:UserUpdate):
+    hashed_password = None
+    if user_data.password:
+        hashed_password = hash_password(user_data.password)
+
+    updated_user = await user_crud.update_user(
+        db,
+        user_id=user_id,
+        user_name=user_data.username,
+        email=user_data.email,
+        hashed_password=hashed_password
+    )
+
+    if not update_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id {user_id} not Found"
+        )
+
+    return update_user   
