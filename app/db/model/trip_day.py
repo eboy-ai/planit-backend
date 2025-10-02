@@ -11,8 +11,8 @@ class TripDay(Base):
     day_date: Mapped[datetime] = mapped_column(nullable=False)  
     day_sequence: Mapped[int] = mapped_column(nullable=False)  # n일차 표시용
 
-    trip = relationship("Trip", back_populates="trip_day")
-    schedule = relationship("Schedule", back_populates="trip_day")
+    # trip = relationship("Trip", back_populates="trip_day")
+    # schedule = relationship("Schedule", back_populates="trip_day")
 
 # CREATE TABLE trip_day (
 #     id BIGINT PRIMARY KEY AUTO_INCREMENT,

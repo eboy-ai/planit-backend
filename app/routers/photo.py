@@ -1,0 +1,62 @@
+from fastapi import APIRouter, UploadFile, File
+from fastapi import  UploadFile, File, Depends
+from fastapi.responses import JSONResponse, StreamingResponse
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.model import Photo
+from app.db.database import get_db
+from app.services.photo import PhotoService
+from app.db.schema.photo import PhotoRead
+import io
+
+
+router = APIRouter(prefix='/reviews/{review_id}/photos',tags=['Photo'])
+
+#####더미 유저 삭제예정
+async def get_user_id():
+    user_id = 1
+    return user_id
+
+# 사진업로드
+@router.post('/', response_model=PhotoRead)
+async def upload_photo(review_id:int, 
+                       file:UploadFile = File(...),
+                       db:AsyncSession=Depends(get_db)):
+    return await PhotoService.create_image(db,review_id,file)
+
+# 본문-해당 리뷰의 사진'리스트'
+@router.get('/', response_model=list[PhotoRead])
+async def get_photos(review_id:int,db:AsyncSession=Depends(get_db)):
+    photo_list = await PhotoService.get_all_photo(db,review_id)
+    print(photo_list)
+    # if not photo_list:
+    #     return await JSONResponse(status_code=404, content={'msg':'Image not found'})    
+    return photo_list
+
+# 대표사진 이미지 조회
+@router.get('/{photo_id}', response_model=PhotoRead)
+async def get_one_photo(review_id:int,photo_id:int,db:AsyncSession=Depends(get_db)):
+    db_photo = await PhotoService.get_photo(db,review_id,photo_id)
+    return db_photo
+
+# 클릭시 이미지 원본 보여주기
+@router.get('/{photo_id}/raw', response_model=PhotoRead)
+async def get_photo_raw(review_id:int, photo_id:int, db:AsyncSession=Depends(get_db)):
+    db_photo = await PhotoService.get_photo(db,review_id,photo_id)
+
+    # 저장된 파일 확장자에 따라 mime-type 설정 (content_type)
+    return StreamingResponse(io.BytesIO(db_photo.data),
+                             media_type=db_photo.content_type
+                             )
+# 올린이미지 삭제
+@router.delete('/{photo_id}', description='Delete Photo')
+async def delete_photo(photo_id:int,
+                       user_id:int=Depends(get_user_id),
+                       db:AsyncSession=Depends(get_db)):
+    db_photo = await PhotoService.delete_photo_by_id(db,photo_id,user_id)
+    
+    if db_photo:
+        return {'msg':'사진삭제완료'}
+    else:
+        return {'msg':'사진삭제실패'}

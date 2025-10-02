@@ -11,7 +11,7 @@ class Weather(Base):
     weather_info: Mapped[Optional[str]] = mapped_column(TEXT, nullable=True)  # LONGTEXT 대체
     date: Mapped[datetime] = mapped_column(nullable=False)  
 
-    city_weathers = relationship("CityWeather", back_populates="weather")
+    # city_weathers = relationship("CityWeather", back_populates="weather")
 
 # CREATE TABLE weather (
 #     id BIGINT PRIMARY KEY AUTO_INCREMENT,    
