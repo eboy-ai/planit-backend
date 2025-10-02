@@ -12,4 +12,4 @@ class Group(Base):
     # User 모델과의 역방향 관계 설정
     # User 모델에서 group 관계에 설정한 back_populates="users"에 대응합니다.
     # uselist=True는 Group 하나에 여러 User가 연결될 수 있음(One-to-Many)을 나타냅니다.
-    # users = relationship("User", back_populates="group", uselist=True)
+    users = relationship("User", back_populates="group", uselist=True)

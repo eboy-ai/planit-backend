@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
-from app.db.schemas.group import GroupResponse
+from app.db.schema.group import GroupResponse
 
 
 # ----------------------
