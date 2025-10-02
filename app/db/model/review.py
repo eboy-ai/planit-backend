@@ -1,16 +1,16 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import BigInteger,String, Text, TIMESTAMP, func, ForeignKey
 from ..database import Base
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
-from app.db.model.trip import Trip
+
 
 class Review(Base):
     __tablename__ ='review'
 
     id:Mapped[int] = mapped_column(primary_key=True, index=True)
-    user_id:Mapped[int] = mapped_column(BigInteger, nullable=False)
-    trip_id:Mapped[int] = mapped_column(BigInteger, nullable=False)
+    user_id:Mapped[int] = mapped_column(BigInteger,ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    trip_id:Mapped[int] = mapped_column(BigInteger,ForeignKey("trip.id", ondelete="CASCADE"), nullable=False)
     title:Mapped[str] = mapped_column(String(255),nullable=False)
     content:Mapped[str] = mapped_column(Text, nullable=False)
     rating:Mapped[int] = mapped_column(nullable=False)
@@ -21,18 +21,21 @@ class Review(Base):
     # # FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
     # trip:Mapped["Trip"]=relationship("Trip", back_populates="review") # cascade="all, delete" orm level 
     #vs ForeignKey(ondelete="CASCADE")
+    # comments:Mapped[List["Comment"]]=relationship("Comment", back_populates="review")
+    # likes:Mapped[List["Like"]]=relationship("Like", back_populates="review")
+    # photos:Mapped[List["Photo"]]=relationship("Photo", back_populates="review")
 
 #like
 class Like(Base):
     __tablename__ ='likes'
     # primary key(user_id,review_id) 복합키 - 좋아요 중복방지
-    user_id:Mapped[int] = mapped_column(BigInteger, primary_key=True, nullable=False)
-    review_id:Mapped[int]= mapped_column(BigInteger, primary_key=True ,nullable=False)
+    user_id:Mapped[int] = mapped_column(BigInteger,ForeignKey("review.user_id", ondelete="CASCADE"), primary_key=True, nullable=False)
+    review_id:Mapped[int]= mapped_column(BigInteger,ForeignKey("review.id", ondelete="CASCADE"), primary_key=True ,nullable=False)
 
     # # FOREIGN KEY (user_id) REFERENCES users(id) on delete cascade,
-    # users:Mapped["User"]=relationship("User", back_populates="likes")
-    # # FOREIGN KEY (review_id) REFERENCES review(id) on delete cascade
     # review:Mapped["Review"]=relationship("Review", back_populates="likes")
+    # # FOREIGN KEY (review_id) REFERENCES review(id) on delete cascade  
+    # review:Mapped[List["Review"]]=relationship("Review", back_populates="likes")
         
 
     

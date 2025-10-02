@@ -15,9 +15,9 @@ class Trip(Base):
     end_date: Mapped[Optional[datetime]] = mapped_column(nullable=True)  
 
     # user = relationship("User", back_populates="trip")
-    # city = relationship("City", back_populates="trip")
-    # trip_day = relationship("TripDay", back_populates="trip")
-    # checklist_item = relationship("ChecklistItem", back_populates="trip")
+    city = relationship("City", back_populates="trip")
+    trip_day = relationship("TripDay", back_populates="trip")
+    checklist_item = relationship("ChecklistItem", back_populates="trip")
 
 # CREATE TABLE trip (
 #     id BIGINT PRIMARY KEY AUTO_INCREMENT,

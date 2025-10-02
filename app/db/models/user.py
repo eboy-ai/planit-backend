@@ -1,7 +1,7 @@
 # app/db/models/user.py
 from sqlalchemy import Column, Integer, String,ForeignKey
 from app.db.database import Base # Base는 declarative_base()로 정의된 클래스라고 가정
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
 
 
 class User(Base):
@@ -19,6 +19,7 @@ class User(Base):
     )
 
     # group = relationship("Group", back_populates="users")
+    comments:Mapped["Comment"]=relationship("Comment", back_populates="users")
     
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"
