@@ -4,6 +4,7 @@ from app.db.model import Review
 from app.db.schema.review import ReviewCreate, ReviewRead, ReviewUpdate
 from app.services import ReviewService
 from app.routers.user import Auth_Dependency
+from app.services.review import get_current_user_id
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -44,20 +45,19 @@ async def read_review(review_id:int,db:AsyncSession=Depends(get_db)):
 #Update
 @router.put('/{review_id}', response_model=ReviewRead)
 async def update_review(review_id:int, 
-                        user_id:int,
                         review:ReviewUpdate,
+                        user_id:int = Depends(get_current_user_id),
                         db:AsyncSession=Depends(get_db)
                         ):
     return await ReviewService.update_review_by_id(db,review,review_id,user_id)    
 
 #delete
 @router.delete('/{review_id}')
-async def delete_review_by_id(review_id:int,db:AsyncSession=Depends(get_db)):
-    db_review = await ReviewService.delete_review_by_id(db,review_id)
+async def delete_review_by_id(review_id:int,user_id:int =Depends(get_current_user_id),db:AsyncSession=Depends(get_db)):
+    db_review = await ReviewService.delete_review_by_id(db,user_id,review_id)
 
     if db_review:
         return {'msg':'리뷰삭제왼료'}
-    else:
-        return {'msg':'삭제 실패'}
+
                                                            
                                                            

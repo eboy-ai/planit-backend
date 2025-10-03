@@ -4,6 +4,8 @@ from sqlalchemy.exc import IntegrityError
 from app.db.model import Review,Like,Trip
 from app.db.schema.review import ReviewCreate, ReviewUpdate, LikeResponse, ReviewRead
 from app.db.crud import ReviewCrud, LikeCrud
+from app.routers.user import Auth_Dependency
+
 from sqlalchemy import select
 from typing import Optional
 from sqlalchemy import select, or_, desc, func
@@ -20,6 +22,10 @@ def add_username(review:Review):
 async def add_likecounts(db:AsyncSession,review:Review):           
     review.like_count=await LikeCrud.count_by_review(db,review.id)
     return review
+#get currnet id -> 가능하면 user쪽으로 이전 (trip, city 생성시에도 쓸 수 있게)
+async def get_current_user_id(currnet_user:Auth_Dependency):
+    user_id = currnet_user.id
+    return user_id
 
 class ReviewService:
     #Create
@@ -73,7 +79,7 @@ class ReviewService:
 
         return db_review
     
-    #Update
+    #Update  -- 본인이 작성한 글만 수정 /삭제가능
     @staticmethod
     async def update_review_by_id(db:AsyncSession, review:ReviewUpdate, review_id:int, user_id:int):
                
@@ -82,7 +88,7 @@ class ReviewService:
             raise HTTPException(status_code=404, detail='리뷰가없습니다')
         
         if db_review.user_id != user_id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='로그인한 사용자만 수정가능')
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='본인이 작성한 글만 수정가능')
         
         update_data = await ReviewCrud.update_by_id(db, review_id, review,user_id)
         await db.commit()
@@ -98,16 +104,19 @@ class ReviewService:
 
     #Delete
     @staticmethod
-    async def delete_review_by_id(db:AsyncSession, review_id:int):
+    async def delete_review_by_id(db:AsyncSession, user_id:int ,review_id:int):
         db_review = await ReviewCrud.get_id(db,review_id)
 
         if not db_review:
             raise HTTPException(status_code=404, detail='리뷰없음')
+        
+        if db_review.user_id != user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='본인이 작성한 글만 삭제가능')
 
         deleted_review = await ReviewCrud.delete_by_id(db,review_id)
         if deleted_review:            
             await db.commit()            
-        return {'detail':'리뷰삭제됨'}
+        return {"detail": "리뷰삭제됨"}
 
 
 class LikeService:
