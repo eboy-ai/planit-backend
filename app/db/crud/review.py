@@ -24,25 +24,14 @@ class ReviewCrud:
         return new_review
     
     #Read
-    #review_id로 조회 / 
-    #db.get- pk로만 조회가능 / db.execute (query)
+    #review_id로 조회      
     @staticmethod
     async def get_id(db:AsyncSession, review_id:int) -> Optional[Review]:
         #user 조회후 username 수정필요
         #리뷰객체 by_id
         db_review = await db.get(Review, review_id)
         if not db_review:
-            return None
-        
-        #username     
-        # user = await db.get(User, db_review.user_id)
-        # if user: 
-        #     db_review.username = user.username
-
-        #like_count
-        like_count= await LikeCrud.count_by_review(db,review_id)
-        db_review.like_count=like_count
-
+            return None 
         return db_review
     
     #reveiw-list 조회 trip에속한 리뷰만
@@ -125,4 +114,5 @@ class LikeCrud:
     async def count_by_review(db:AsyncSession, review_id:int):
         result = await db.execute(select(func.count()).select_from(Like).where(Like.review_id == review_id))                                       
         return result.scalar_one() or 0
+
 

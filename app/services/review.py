@@ -8,6 +8,19 @@ from sqlalchemy import select
 from typing import Optional
 from sqlalchemy import select, or_, desc, func
 
+# by_relationship- responsebody에 유저이름, 좋아요 수 추가함수  
+# #username  
+async def add_username(review:Review):        
+           
+    if review.users:
+        review.username = review.users.username
+    else:
+        raise HTTPException(status_code=404,detail='작성자 정보 없음')
+    return review
+#like_count 
+async def add_likecounts(db:AsyncSession,review:Review):           
+    review.like_count=await LikeCrud.count_by_review(db,review.id)
+    return review
 
 class ReviewService:
     #Create
@@ -19,8 +32,12 @@ class ReviewService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='존재하지않는 여행계획입니다')
         
         db_review = await ReviewCrud.create(db, review_data,user_id,trip_id)
-        # await db.commit() -get_db에서 commit 관리중
+        # await db.commit() -get_db에서 commit 관리중 삭제     
         await db.refresh(db_review)
+        
+        #orm 반환용 / user주입 / like_count 초기값
+        db_review = await add_username(db_review)
+        db_review.like_counts = 0
         return db_review
         
     
@@ -36,12 +53,20 @@ class ReviewService:
 
         return db_review
 
-    #review상세보기
+    #review_id로 개별조회
     @staticmethod
-    async def get_review_username(db:AsyncSession,review_id:int):
+    async def get_review(db:AsyncSession,review_id:int):
         db_review = await ReviewCrud.get_id(db,review_id)  
         if not db_review:
             raise HTTPException(status_code=404, detail="리뷰가 없습니다")     
+        if not db_review.users:
+            raise HTTPException(status_code=404, detail='작성자 정보 없음')
+        
+        #username
+        db_review.username = db_review.users.username
+        #like_count       
+        db_review.like_count=await LikeCrud.count_by_review(db,review_id)
+
         return db_review
     
     #Update

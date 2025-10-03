@@ -38,7 +38,7 @@ async def list_reviews(trip_id:int,
 #상세보기
 @router.get('/{review_id}', response_model=ReviewRead)
 async def read_review(review_id:int,db:AsyncSession=Depends(get_db)):
-    result = await ReviewService.get_review_username(db,review_id)
+    result = await ReviewService.get_review(db,review_id)
     return result
 
 #update
