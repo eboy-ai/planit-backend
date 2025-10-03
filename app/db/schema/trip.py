@@ -8,7 +8,7 @@ class TripBase(BaseModel):
     end_date: Optional[datetime] = None
 
 class TripCreate(TripBase):
-    # user_id: int     # 임시로 삭제, 나중에 user_id 추가
+    user_id: int     
     city_id: int
 
 class TripUpdate(BaseModel):
@@ -19,7 +19,7 @@ class TripUpdate(BaseModel):
 
 class TripInDB(TripBase):
     id: int
-    # user_id: int
+    user_id: int
     city_id: int
 
     class Config:
