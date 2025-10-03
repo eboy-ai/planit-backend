@@ -5,10 +5,6 @@ from sqlalchemy import select, or_, desc, func
 from typing import Optional
 
 
-class User:  
-    username = 'gildong'
-    
-
 class ReviewCrud:
 
     #Create    
@@ -37,11 +33,8 @@ class ReviewCrud:
         db_review = await db.get(Review, review_id)
         if not db_review:
             return None
-        #username
-        #연결전 하드코딩
-        db_review.username = User.username
-
-        #FK 연결후 
+        
+        #username     
         # user = await db.get(User, db_review.user_id)
         # if user: 
         #     db_review.username = user.username

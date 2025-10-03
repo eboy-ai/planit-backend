@@ -1,7 +1,7 @@
 from fastapi import HTTPException,status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
-from app.db.model import Review,Like
+from app.db.model import Review,Like,Trip
 from app.db.schema.review import ReviewCreate, ReviewUpdate, LikeResponse, ReviewRead
 from app.db.crud import ReviewCrud, LikeCrud
 from sqlalchemy import select
@@ -12,22 +12,20 @@ from sqlalchemy import select, or_, desc, func
 class ReviewService:
     #Create
     @staticmethod
-    async def create(db:AsyncSession, 
-                     review_data:ReviewCreate, 
-                     user_id:int,
-                     trip_id:int):
-        try:
-            db_review = await ReviewCrud.create(db, review_data,user_id,trip_id)
-
-            await db.commit()
-            await db.refresh(db_review)
-            return db_review
-        except Exception:
-            raise
+    async def create(db:AsyncSession,review_data:ReviewCreate, user_id:int,trip_id:int):
+        #trip_id 유효성 검증
+        trip = await db.get(Trip, trip_id)  #PK조회 전용
+        if not trip:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='존재하지않는 여행계획입니다')
+        
+        db_review = await ReviewCrud.create(db, review_data,user_id,trip_id)
+        # await db.commit() -get_db에서 commit 관리중
+        await db.refresh(db_review)
+        return db_review
+        
     
-    #Read
-    
-    #trip id에 해당하는 list조회(R) - 여행별 리뷰
+    #Read    
+    #trip id에 해당하는 list조회(R) - 여행별 리뷰 / trip_id없을시 빈배열반환 []
     @staticmethod
     async def get_all_review(db:AsyncSession,
                       trip_id:int,
@@ -38,13 +36,14 @@ class ReviewService:
 
         return db_review
 
-    #review_id
+    #review상세보기
     @staticmethod
     async def get_review_username(db:AsyncSession,review_id:int):
         db_review = await ReviewCrud.get_id(db,review_id)  
         if not db_review:
             raise HTTPException(status_code=404, detail="리뷰가 없습니다")     
         return db_review
+    
     #Update
     @staticmethod
     async def update_review_by_id(db:AsyncSession, review:ReviewUpdate, review_id:int, user_id:int):
@@ -54,7 +53,7 @@ class ReviewService:
             raise HTTPException(status_code=404, detail='리뷰가없습니다')
         
         if db_review.user_id != user_id:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='로그인한 사용자만 수정가능')
         
         update_data = await ReviewCrud.update_by_id(db, review_id, review,user_id)
         await db.commit()

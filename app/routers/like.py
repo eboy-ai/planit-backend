@@ -6,6 +6,7 @@ from app.services import LikeService
 from sqlalchemy.ext.asyncio import AsyncSession
 from jwt import InvalidTokenError, ExpiredSignatureError
 from app.core.tmp import get_user_id
+
 router = APIRouter(prefix='/reviews',tags=['Like'])
 
 #액세스 토큰이 없어도 예외던지지 않겠다. 그냥 None반환
@@ -20,8 +21,8 @@ async def get_user_id_option(request:Request):
 #로그인한 유저 좋아요 토글 요청 + 좋아요 갯수
 @router.post('/{review_id}/likes', response_model=LikeResponse)
 async def toggle_like(review_id:int,
-                user_id:int=Depends(get_user_id),
-                db:AsyncSession=Depends(get_db)):
+                      user_id:int=Depends(get_user_id),
+                      db:AsyncSession=Depends(get_db)):
     return await LikeService.toggle(db,user_id,review_id)
 #페이지 로드시 좋아요 수 노출
 @router.get('/{review_id}/likes', response_model=LikeResponse)

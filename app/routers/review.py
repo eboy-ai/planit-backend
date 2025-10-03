@@ -3,7 +3,7 @@ from app.db.database import get_db
 from app.db.model import Review
 from app.db.schema.review import ReviewCreate, ReviewRead, ReviewUpdate
 from app.services import ReviewService
-from app.core.tmp import get_user_id
+from app.routers.user import Auth_Dependency
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,12 +15,14 @@ router = APIRouter(prefix='/reviews',tags=['Review'])
 @router.post('/', response_model=ReviewRead)
 async def create_review(review_data:ReviewCreate,
                         trip_id:int,
-                        user_id:int = Depends(get_user_id),                        
+                        current_user:Auth_Dependency,   #로그인한사람만 작성가능
                         db:AsyncSession=Depends(get_db)):
+    # 현재 로그인한 유저의 User.id
+    user_id = current_user.id
     return await ReviewService.create(db,review_data,user_id,trip_id)
 
 #Read
-#get_list
+#리뷰리스트
 @router.get('/', response_model=list[ReviewRead])
 async def list_reviews(trip_id:int,
                        db:AsyncSession=Depends(get_db),
@@ -33,7 +35,7 @@ async def list_reviews(trip_id:int,
                                                limit=limit,
                                                offset=offset)
    
-#get_review_from_review_id- 상세보기
+#상세보기
 @router.get('/{review_id}', response_model=ReviewRead)
 async def read_review(review_id:int,db:AsyncSession=Depends(get_db)):
     result = await ReviewService.get_review_username(db,review_id)
