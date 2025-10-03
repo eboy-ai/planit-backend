@@ -15,10 +15,8 @@ class Review(Base):
     content:Mapped[str] = mapped_column(Text, nullable=False)
     rating:Mapped[int] = mapped_column(nullable=False)
     created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP, server_default=func.now())
-
-    # # FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    users = relationship("User", back_populates="review", lazy="selectin")  # 
-    # # FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
+    
+    users = relationship("User", back_populates="review", lazy="selectin")  #     
     trip = relationship("Trip", back_populates="review") 
     comments = relationship("Comment", back_populates="review")
     likes = relationship("Like", back_populates="review")
@@ -30,10 +28,8 @@ class Like(Base):
     # primary key(user_id,review_id) 복합키 - 좋아요 중복방지
     user_id:Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, nullable=False)
     review_id:Mapped[int]= mapped_column(ForeignKey("review.id", ondelete="CASCADE"), primary_key=True ,nullable=False)
-
-    # # FOREIGN KEY (user_id) REFERENCES users(id) on delete cascade,
-    users = relationship("User", back_populates="likes")
-    # # FOREIGN KEY (review_id) REFERENCES review(id) on delete cascade  
+    
+    users = relationship("User", back_populates="likes")     
     review = relationship("Review", back_populates="likes")
         
 
