@@ -27,7 +27,7 @@ class ReviewCrud:
     #review_id로 조회      
     @staticmethod
     async def get_id(db:AsyncSession, review_id:int) -> Optional[Review]:
-        #user 조회후 username 수정필요
+        
         #리뷰객체 by_id
         db_review = await db.get(Review, review_id)
         if not db_review:

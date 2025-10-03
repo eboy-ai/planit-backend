@@ -10,8 +10,7 @@ from sqlalchemy import select, or_, desc, func
 
 # by_relationship- responsebody에 유저이름, 좋아요 수 추가함수  
 # #username  
-async def add_username(review:Review):        
-           
+def add_username(review:Review):    
     if review.users:
         review.username = review.users.username
     else:
@@ -36,7 +35,7 @@ class ReviewService:
         await db.refresh(db_review)
         
         #orm 반환용 / user주입 / like_count 초기값
-        db_review = await add_username(db_review)
+        db_review = add_username(db_review)
         db_review.like_counts = 0
         return db_review
         
@@ -50,7 +49,12 @@ class ReviewService:
                       limit:int=10,
                       offset:int = 0):
         db_review = await ReviewCrud.get_all(db,trip_id,search,limit,offset)
-
+        #orm 반환용 / user주입 / like_count 초기값
+        if not db_review:
+            return []
+        for review in db_review:
+            add_username(review)
+            await add_likecounts(db,review)            
         return db_review
 
     #review_id로 개별조회
@@ -63,9 +67,9 @@ class ReviewService:
             raise HTTPException(status_code=404, detail='작성자 정보 없음')
         
         #username
-        db_review.username = db_review.users.username
+        add_username(db_review)
         #like_count       
-        db_review.like_count=await LikeCrud.count_by_review(db,review_id)
+        await add_likecounts(db,db_review)
 
         return db_review
     
@@ -83,6 +87,12 @@ class ReviewService:
         update_data = await ReviewCrud.update_by_id(db, review_id, review,user_id)
         await db.commit()
         await db.refresh(update_data)
+
+        #username
+        add_username(update_data)
+        #like_count       
+        await add_likecounts(db,update_data)
+
         return update_data
         
 

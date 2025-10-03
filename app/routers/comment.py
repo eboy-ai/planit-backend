@@ -3,6 +3,7 @@ from app.db.database import get_db
 from app.db.model import Comment
 from app.db.schema.comment import CommentCreate, CommentRead, CommentUpdate
 from app.services import CommentService
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix='/reviews/{review_id}/comments',tags=['Comments'])
@@ -41,6 +42,7 @@ async def list_comments(review_id:int,
 @router.get('/{comment_id}', response_model=CommentRead)
 async def get_comment(comment_id:int,db:AsyncSession=Depends(get_db)):
     result = await CommentService.get_id(db,comment_id)
+    add_
     return result
 
 #update(put-restful)

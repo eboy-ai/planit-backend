@@ -41,7 +41,7 @@ async def read_review(review_id:int,db:AsyncSession=Depends(get_db)):
     result = await ReviewService.get_review(db,review_id)
     return result
 
-#update
+#Update
 @router.put('/{review_id}', response_model=ReviewRead)
 async def update_review(review_id:int, 
                         user_id:int,
