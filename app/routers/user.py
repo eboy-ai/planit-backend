@@ -7,7 +7,7 @@ from app.db.model.user import User as UserModel
 from typing import Annotated , List
 from jose import JWTError
 from app.core.jwt import verify_access_token
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from app.db.crud import user as user_crud
 
 
@@ -60,8 +60,9 @@ Auth_Dependency = Annotated[UserModel, Depends(get_current_user)]
 
 
 @router.post("/login", response_model=Token)
-async def login_for_user(user:UserLogin, db:AsyncSession=Depends(get_db)):
-    access_token = await login_user(db, user.email, user.password)
+async def login_for_user(user:OAuth2PasswordRequestForm=Depends(), db:AsyncSession=Depends(get_db)):
+    email = user.username
+    access_token = await login_user(db, email, user.password)
 
     if not access_token:
         raise HTTPException(
