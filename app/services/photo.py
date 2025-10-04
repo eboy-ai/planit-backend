@@ -17,7 +17,7 @@ class PhotoService:
                                           filename=file.filename,
                                           content_type=file.content_type,
                                           data=contents)
-        await db.commit()
+        await db.flush()
         await db.refresh(db_photo)        
         return db_photo
     
@@ -51,6 +51,6 @@ class PhotoService:
         
         deleted_photo = await PhotoCrud.delete_by_id(db,photo_id,user_id)
         if deleted_photo:
-            await db.commit()
+            await db.flush()
         return deleted_photo
         

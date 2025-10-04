@@ -38,7 +38,7 @@ class ReviewService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='존재하지않는 여행계획입니다')
         
         db_review = await ReviewCrud.create(db, review_data,user_id,trip_id)
-        # await db.commit() -get_db에서 commit 관리중 삭제     
+        # await db.commit() -get_db에서 commit 관리중 -> 삭제     
         await db.refresh(db_review)
         
         #orm 반환용 / user주입 / like_count 초기값

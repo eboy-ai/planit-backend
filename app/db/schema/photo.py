@@ -9,7 +9,7 @@ class PhotoBase(BaseModel):
 class PhotoCreate(PhotoBase):
     review_id: int
 
-#Update - 사진은 파일교체 Delete+ create로 처리(비지니스로직)
+#Update - 사진은 파일교체 Delete+ create로 처리
 
 #Read
 class PhotoInDB(PhotoBase):
