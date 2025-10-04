@@ -25,7 +25,7 @@ async def create_review(review_data:ReviewCreate,
 #Read
 #리뷰리스트
 @router.get('/', response_model=list[ReviewRead])
-async def list_reviews(trip_id:int,
+async def review_list(trip_id:int,
                        db:AsyncSession=Depends(get_db),
                        serach:str|None=Query(None,min_length=1),
                        limit:int = Query(10,ge=1,le=30),

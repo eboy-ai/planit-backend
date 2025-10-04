@@ -17,14 +17,14 @@ class CommentService:
         try:
             db_comment = await CommentCrud.create(db, comment_data,user_id,review_id)
 
-            await db.commit()
+            # await db.commit()
             await db.refresh(db_comment)
             return db_comment
         except Exception:
             raise
     
     #Read    
-    #trip id에 해당하는 list조회(R) vvvvvvvvv
+    #trip id에 해당하는 list조회(R) 
     @staticmethod
     async def get_all_comment(db:AsyncSession,
                       review_id:int,
@@ -44,17 +44,17 @@ class CommentService:
 
     #Update
     @staticmethod
-    async def update_comment_by_id(db:AsyncSession, comment:CommentUpdate, comment_id:int, user_id:int):
-               
+    async def update_comment_by_id(db:AsyncSession, comment:CommentUpdate, comment_id:int, user_id:int):               
         db_comment = await CommentCrud.get_id(db,comment_id)
+
         if not db_comment:
-            raise HTTPException(status_code=404, detail='리뷰가없습니다')
+            raise HTTPException(status_code=404, detail='댓글이 없습니다')
         #권한체크
         if db_comment.user_id != user_id:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='본인이 작성한 댓글만 수정가능')
         
         update_data = await CommentCrud.update_by_id(db, comment,comment_id,user_id)
-        await db.commit()
+        # await db.commit()
         await db.refresh(update_data)
         return update_data        
 
@@ -72,5 +72,5 @@ class CommentService:
 
         deleted_comment = await CommentCrud.delete_by_id(db,comment_id,user_id)
         if deleted_comment:            
-            await db.commit()            
-            return {'detail':'댓글삭제됨'}
+            await db.flush()            
+            return deleted_comment
