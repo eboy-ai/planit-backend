@@ -8,15 +8,11 @@ from app.db.model import Photo
 from app.db.database import get_db
 from app.services.photo import PhotoService
 from app.db.schema.photo import PhotoRead
+from app.services.review import get_current_user_id
 import io
 
 
 router = APIRouter(prefix='/reviews/{review_id}/photos',tags=['Photo'])
-
-#####더미 유저 삭제예정
-async def get_user_id():
-    user_id = 1
-    return user_id
 
 # 사진업로드
 @router.post('/', response_model=PhotoRead)
@@ -52,7 +48,7 @@ async def get_photo_raw(review_id:int, photo_id:int, db:AsyncSession=Depends(get
 # 올린이미지 삭제
 @router.delete('/{photo_id}', description='Delete Photo')
 async def delete_photo(photo_id:int,
-                       user_id:int=Depends(get_user_id),
+                       user_id:int=Depends(get_current_user_id),
                        db:AsyncSession=Depends(get_db)):
     db_photo = await PhotoService.delete_photo_by_id(db,photo_id,user_id)
     
