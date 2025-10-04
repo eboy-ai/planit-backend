@@ -10,7 +10,7 @@ from sqlalchemy import select
 from typing import Optional
 from sqlalchemy import select, or_, desc, func
 
-# by_relationship- responsebody에 유저이름, 좋아요 수 추가함수  
+# by_relationship- responsebody에 유저이름, 좋아요 수 추가헬퍼함수  
 # #username  
 def add_username(review:Review):    
     if review.users:
@@ -27,6 +27,7 @@ async def get_current_user_id(currnet_user:Auth_Dependency):
     user_id = currnet_user.id
     return user_id
 
+#리뷰
 class ReviewService:
     #Create
     @staticmethod
@@ -115,20 +116,21 @@ class ReviewService:
 
         deleted_review = await ReviewCrud.delete_by_id(db,review_id)
         if deleted_review:            
-            await db.commit()            
+            await db.flush()            
         return {"detail": "리뷰삭제됨"}
 
-
+#좋아요(Like)
 class LikeService:
+    # 좋아요 토글 - 한 게시글당 한ㅂ
     @staticmethod
     async def toggle(db:AsyncSession, user_id:Optional[int], review_id:int):
         if await LikeCrud.exists(db,user_id,review_id):
             await LikeCrud.delete_id(db,user_id,review_id)
-            await db.commit()
+            await db.flush()
             liked = False
         else:
             await LikeCrud.create(db,user_id,review_id)
-            await db.commit()
+            await db.flush()
             liked = True
         
         count = await LikeCrud.count_by_review(db,review_id)
@@ -139,7 +141,9 @@ class LikeService:
     async def count_likes(db:AsyncSession, review_id:int, user_id:int|None=None):        
         count = await LikeCrud.count_by_review(db,review_id)
         liked=False
+       
         if user_id:
             liked = await LikeCrud.exists(db,user_id,review_id)
+       
         return LikeResponse(review_id=review_id,like_count=count,liked=liked)
                              

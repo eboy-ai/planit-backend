@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.model import Review, Like
 from app.db.schema.review import ReviewCreate, ReviewUpdate
-from sqlalchemy import select, or_, desc, func
+from sqlalchemy import select, or_, desc, func,and_
 from typing import Optional
 
 
@@ -77,12 +77,13 @@ class ReviewCrud:
             return True
         return False
 
+#Like
 class LikeCrud:
     @staticmethod
     async def exists(db:AsyncSession, user_id:int, review_id:int) -> bool:
         result = await db.execute(
-            select(Like).where(Like.user_id == user_id,
-                               Like.review_id == review_id))
+            select(Like).where(and_(Like.user_id == user_id,
+                               Like.review_id == review_id)))
         if result.scalar_one_or_none():
             return True
         else: 
