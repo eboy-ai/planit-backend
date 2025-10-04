@@ -98,6 +98,17 @@ async def del_user(user: UserBase, db: AsyncSession = Depends(get_db) ):
     return msg
 
 #유저 업데이트
+#유저 업데이트
 @router.patch("/me" , response_model=UserResponse)
-async def upd_user(user: UserUpdate, db: AsyncSession = Depends(get_db)):
-    mod_user = update_user(db, user) 
+async def upd_user(
+        user_data: UserUpdate, # 클라이언트가 보낸 수정 데이터
+        db: DB_Dependency,
+        current_user: Auth_Dependency # 현재 로그인된 사용자 정보 (UserModel 인스턴스)
+    ):
+    
+    mod_user = await update_user(
+        db, 
+        current_user.id,  
+        user_data         
+    )
+    return mod_user
