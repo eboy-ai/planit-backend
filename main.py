@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-# from fastapi.concurrency import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 from app.db import model
 from app.db.database import async_engine, Base
 
@@ -20,7 +20,14 @@ async def lifespan(app:FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+# CORS 설정 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], #모든 도메인 / 안되면 "http://localhost:3000" 변경
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+#라우터 등록
 app.include_router(router)
-
-
-# CORS middleware 추가 필요
