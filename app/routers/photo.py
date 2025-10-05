@@ -17,9 +17,10 @@ router = APIRouter(prefix='/reviews/{review_id}/photos',tags=['Photo'])
 # 사진업로드
 @router.post('/', response_model=PhotoRead)
 async def upload_photo(review_id:int, 
+                       user_id:int=Depends(get_current_user_id),
                        file:UploadFile = File(...),
                        db:AsyncSession=Depends(get_db)):
-    return await PhotoService.create_image(db,review_id,file)
+    return await PhotoService.create_image(db,review_id,user_id,file)
 
 # 본문-해당 리뷰의 사진'리스트'
 @router.get('/', response_model=list[PhotoRead])
