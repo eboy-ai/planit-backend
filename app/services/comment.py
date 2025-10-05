@@ -1,6 +1,5 @@
 from fastapi import HTTPException,status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError
 from app.db.model import Comment
 from app.db.schema.comment import CommentCreate, CommentUpdate, CommentRead
 from app.db.crud import CommentCrud

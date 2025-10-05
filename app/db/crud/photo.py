@@ -1,6 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.model import Photo, Review
-from app.db.schema.photo import PhotoCreate
 from sqlalchemy import select, or_, desc, func
 from typing import Optional
 
