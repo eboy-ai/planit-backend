@@ -92,9 +92,8 @@ async def read_all_user_route(db: DB_Dependency, current_user: Auth_Dependency):
 
 #유저 삭제
 @router.delete("/me",status_code=status.HTTP_200_OK)
-async def del_user(user: UserBase, db: AsyncSession = Depends(get_db) ):
-    target = get_user(db, user.email)
-    msg = await delete_user(db, target.id )
+async def del_user(db : DB_Dependency, current_user: Auth_Dependency):
+    msg = await delete_user(db,current_user.id )
     return msg
 
 #유저 업데이트
