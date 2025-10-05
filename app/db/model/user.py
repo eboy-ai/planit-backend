@@ -23,9 +23,8 @@ class User(Base):
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"
     
-    #trip/review relationship  추가
-    trip = relationship("Trip", back_populates="users")
-    
-    review = relationship("Review", back_populates="users")
-    comments = relationship("Comment", back_populates="users")
+    #trip/review relationship 추가
+    trip = relationship("Trip", back_populates="users", cascade="all, delete-orphan")
+    review = relationship("Review", back_populates="users", cascade="all, delete-orphan")
+    comments = relationship("Comment", back_populates="users", cascade="all, delete-orphan")
     likes = relationship("Like", back_populates="users")
