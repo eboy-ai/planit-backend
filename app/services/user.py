@@ -34,9 +34,6 @@ async def login_user(db: AsyncSession, email: str, password: str) -> str | None:
     if not user or not verify_password(password, user.password):
         return None
 
-    await db.commit()
-    await db.refresh(user)
-
     return create_access_token(data={"sub": str(user.id)})
 
 
@@ -81,10 +78,10 @@ async def update_user(db: AsyncSession, user_id: int ,user_data:UserUpdate):
         hashed_password=hashed_password
     )
 
-    if not update_user:
+    if not updated_user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with id {user_id} not Found"
         )
 
-    return update_user   
+    return updated_user   

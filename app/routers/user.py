@@ -92,12 +92,22 @@ async def read_all_user_route(db: DB_Dependency, current_user: Auth_Dependency):
 
 #유저 삭제
 @router.delete("/me",status_code=status.HTTP_200_OK)
-async def del_user(user: UserBase, db: AsyncSession = Depends(get_db) ):
-    target = get_user(db, user.email)
-    msg = await delete_user(db, target.id )
+async def del_user(db : DB_Dependency, current_user: Auth_Dependency):
+    msg = await delete_user(db,current_user.id )
     return msg
 
 #유저 업데이트
+#유저 업데이트
 @router.patch("/me" , response_model=UserResponse)
-async def upd_user(user: UserUpdate, db: AsyncSession = Depends(get_db)):
-    mod_user = update_user(db, user) 
+async def upd_user(
+        user_data: UserUpdate, # 클라이언트가 보낸 수정 데이터
+        db: DB_Dependency,
+        current_user: Auth_Dependency # 현재 로그인된 사용자 정보 (UserModel 인스턴스)
+    ):
+    
+    mod_user = await update_user(
+        db, 
+        current_user.id,  
+        user_data         
+    )
+    return mod_user
