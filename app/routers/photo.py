@@ -1,10 +1,9 @@
 from fastapi import APIRouter, UploadFile, File
 from fastapi import  UploadFile, File, Depends
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import StreamingResponse
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.model import Photo
 from app.db.database import get_db
 from app.services.photo import PhotoService
 from app.db.schema.photo import PhotoRead
@@ -26,9 +25,7 @@ async def upload_photo(review_id:int,
 @router.get('/', response_model=list[PhotoRead])
 async def get_photos(review_id:int,db:AsyncSession=Depends(get_db)):
     photo_list = await PhotoService.get_all_photo(db,review_id)
-    print(photo_list)
-    # if not photo_list:
-    #     return await JSONResponse(status_code=404, content={'msg':'Image not found'})    
+    print(photo_list)      
     return photo_list
 
 # 대표사진 이미지 조회

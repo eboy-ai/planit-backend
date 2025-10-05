@@ -1,12 +1,10 @@
 from fastapi import HTTPException,status, UploadFile, File
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError
 from app.db.model import Photo, Review
-from app.db.schema.photo import PhotoCreate
 from app.db.crud import PhotoCrud
 from sqlalchemy import select
-from typing import Optional
+
 
 class PhotoService:
     #사진생성 Create
@@ -40,11 +38,9 @@ class PhotoService:
         if not db_photo: 
             return [] #등록사진 없으면 빈배열
         print(db_photo)
-        return db_photo
+        return db_photo      
         
-        #파일 확장자 mime-type
-    
-    #사진 한개(대표이미지/원본조회) 조회
+    #사진 단일 조회(대표이미지/원본조회) 
     @staticmethod
     async def get_photo(db:AsyncSession,review_id:int,photo_id:int):  
         #리뷰 존재여부

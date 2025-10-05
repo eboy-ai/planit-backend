@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends, Request, Query
+from fastapi import APIRouter, Depends, Query
 from app.db.database import get_db
-from app.db.model import Review
 from app.db.schema.review import ReviewCreate, ReviewRead, ReviewUpdate
 from app.services import ReviewService
 from app.routers.user import Auth_Dependency

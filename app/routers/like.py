@@ -1,15 +1,9 @@
-from fastapi import APIRouter, Depends, Request, Query, HTTPException,status
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_db
-from app.db.model import Like, User
-from app.db.schema.review import LikeResponse, LikeCreate
+from app.db.schema.review import LikeResponse 
 from app.services import LikeService
-from app.core.jwt import verify_access_token
 from app.services.review import get_current_user_id
-from app.routers.user import Auth_Dependency,get_current_user,oauth2_scheme
-from jwt import InvalidTokenError
-from typing import Optional
-from jose import JWTError
 
 router = APIRouter(prefix='/reviews',tags=['Like'])
 
@@ -19,6 +13,7 @@ async def toggle_like(review_id:int,
                       user_id:int=Depends(get_current_user_id),
                       db:AsyncSession=Depends(get_db)):
     return await LikeService.toggle(db,user_id,review_id)
+
 #페이지 로드시 좋아요 수 노출
 @router.get('/{review_id}/likes', response_model=LikeResponse)
 async def get_likes(review_id:int,

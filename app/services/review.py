@@ -1,11 +1,9 @@
 from fastapi import HTTPException,status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError
 from app.db.model import Review,Like,Trip
 from app.db.schema.review import ReviewCreate, ReviewUpdate, LikeResponse, ReviewRead
 from app.db.crud import ReviewCrud, LikeCrud
 from app.routers.user import Auth_Dependency
-
 from sqlalchemy import select
 from typing import Optional
 from sqlalchemy import select, or_, desc, func
