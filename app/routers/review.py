@@ -57,6 +57,31 @@ async def delete_review_by_id(review_id:int,user_id:int =Depends(get_current_use
 
     if db_review:
         return {'msg':'리뷰삭제왼료'}
+# 외부api 구조 확인용
+from fastapi import APIRouter, HTTPException
+import httpx
 
+router = APIRouter(prefix="/test-weather", tags=["Test"])
+API_KEY = "acfe504c47bcfd91a492915a1cf41c28"
+
+@router.get("/")
+async def get_weather_by_city(city: str):
+    """
+    도시 이름으로 현재 날씨 구조(JSON) 확인용 임시 API
+    예: /test-weather?city=Seoul
+    """
+    url = "https://api.openweathermap.org/data/2.5/weather"
+    params = {
+        "q": city,
+        "appid": API_KEY,
+        "units": "metric",
+        "lang": "kr"
+    }
+
+    async with httpx.AsyncClient() as client:
+        res = await client.get(url, params=params)
+        if res.status_code != 200:
+            raise HTTPException(status_code=res.status_code, detail=res.text)
+        return res.json()  # 그대로 Response Body로 반환
                                                            
                                                            
