@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from . import review, comment, like, photo
-from . import city_router, trip_router
+from . import city_router, trip_router, weather
 from . import user
 
 router = APIRouter()
@@ -18,7 +18,7 @@ router = APIRouter()
 #     router.include_router(module.router)
 
 # 2. 통합
-planit = [user,city_router,trip_router,review,comment,like,photo]
+planit = [user,city_router,trip_router,review,comment,like,photo,weather]
 for module in planit:
     router.include_router(module.router)
 
