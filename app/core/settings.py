@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     algorithm: str = Field(..., alias="ALGORITHM")
     access_token_expire_minutes: int = Field(..., alias="ACCESS_TOKEN_EXPIRE_MINUTES")
 
+    # OpenWeatherMap API Key
+    open_weather_api_key: str = Field(..., alias="OPEN_WEATHER_API_KEY")
+
+
     class Config:
         env_file = ".env"
         extra = "allow"
