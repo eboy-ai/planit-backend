@@ -37,6 +37,15 @@ class WeatherService:
     # (추가) : 좌표(위도, 경도)로 날씨 조회
     @staticmethod
     async def get_weather_by_coords(db:AsyncSession, lat:float, lon:float):
+
+        # (추가) : DB에서 캐시 확인 (최근 1시간 이내 데이터)
+        cached_weather = await WeatherCrud.get_recent_weather_by_coords(db, lat, lon)
+
+        if cached_weather:
+            # 캐시된 데이터가 있으면 반환
+            return json.loads(cached_weather.weather_info)
+
+        # 캐시된 데이터가 없으면 OpenWeatherMap API 호출
         url = "https://api.openweathermap.org/data/2.5/weather"
         params = {  "lat": lat, 
                     "lon": lon,
