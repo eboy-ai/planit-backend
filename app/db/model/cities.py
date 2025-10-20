@@ -8,6 +8,8 @@ class City(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, index=True) 
     city_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)  
+    lat: Mapped[Optional[float]] = mapped_column(nullable=True)
+    lon: Mapped[Optional[float]] = mapped_column(nullable=True)
     is_domestic: Mapped[Optional[bool]] = mapped_column(nullable=True)  
 
     trip = relationship("Trip", back_populates="city")

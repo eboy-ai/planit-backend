@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.model import Weather
 from app.db.schema.weather import WeatherBase
 from app.db.crud import WeatherCrud
+from app.services import CityService
 from app.routers.user import Auth_Dependency
 from sqlalchemy import select
 from typing import Optional
@@ -13,6 +14,9 @@ import json
 class WeatherService:
     #외부 api 호출 후 DB저장 기초호출만구현//
     #  DB저장후 1시간 이내 재요청시 저장된값 DB에서 호출추가(외부호출누수 방지) 
+    #1도시조회
+    #2db캐시확인 조건분기(2h이상 2h 미만)
+    #3 city_name / get city_id join / 외부 api호출
     @staticmethod
     async def get_weather(db:AsyncSession,city:str):        
         url = "https://api.openweathermap.org/data/2.5/weather"
