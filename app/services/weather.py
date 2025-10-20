@@ -38,7 +38,7 @@ class WeatherService:
                     "appid": settings.weather_key, #민감정보 분리 .env
                     "units":'metric',  #°F -> °C
                     "lang":'kr' }
-        
+        print("현재 사용중인 API KEY:", settings.weather_key)
         async with httpx.AsyncClient() as client:
             response = await client.get(url, params=params)            
             data=response.json()
