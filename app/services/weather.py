@@ -39,7 +39,7 @@ class WeatherService:
             db_weather = query2.scalars().first()
 
         # 3 캐시 유효성 검사
-        if db_weather and (datetime.utcnow() - db_weather.updated_at) < timedelta(hours=3):
+        if db_weather and (datetime.utcnow() - db_weather.date) < timedelta(hours=3):
             return json.loads(db_weather.weather_info)
         
         else:
@@ -55,7 +55,7 @@ class WeatherService:
                 response = await client.get(url, params=params)            
                 data=response.json()
 
-            #호출 후 DB저장or update
+            #호출 후 DB저장 or update
             new_weather = await WeatherCrud.create(db,data)
             await db.flush()
             await db.refresh(new_weather)
