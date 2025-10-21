@@ -1,7 +1,7 @@
 from app.db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import BigInteger, TEXT
-from datetime import datetime
+from sqlalchemy import BigInteger, TEXT, DateTime
+from datetime import datetime, timezone
 from typing import Optional
 
 class Weather(Base):
@@ -9,7 +9,8 @@ class Weather(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, index=True) 
     weather_info: Mapped[Optional[str]] = mapped_column(TEXT, nullable=True)  # LONGTEXT 대체
-    date: Mapped[datetime] = mapped_column(nullable=False)  
+    date: Mapped[datetime] = mapped_column(DateTime(timezone=True),
+                                           default=lambda: datetime.now(timezone.utc),nullable=False)  
 
     city_weathers = relationship("CityWeather", back_populates="weather")
 
