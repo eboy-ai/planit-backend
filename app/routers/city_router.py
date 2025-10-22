@@ -71,12 +71,15 @@ from app.db.model.cities import City
 async def init(db:AsyncSession=Depends(get_db)):
         count = await db.scalar(select(func.count()).select_from(City))
         if count == 0:
-            df = pd.read_excel("cities_list.xlsx")
+            df = pd.read_excel("cities_list_ko.xlsx")
             for _, row in df.iterrows():
                 db.add(City(
                     city_name=row["name"],
                     lat=row["lat"],
-                    lon=row["lon"]
+                    lon=row["lon"],
+                    country=row["country"],
+                    ko_name=row["ko_name"],
+                    ko_country=row["ko_country"]
                 ))
             await db.commit()
         return {'msg':'도시 목록 추가완료'}

@@ -8,6 +8,9 @@ class City(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, index=True) 
     city_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)  
+    ko_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=False)
+    country: Mapped[Optional[str]] = mapped_column(String(100), nullable=False)
+    ko_country: Mapped[Optional[str]] = mapped_column(String(100), nullable=False)
     lat: Mapped[Optional[float]] = mapped_column(nullable=True)
     lon: Mapped[Optional[float]] = mapped_column(nullable=True)
     is_domestic: Mapped[Optional[bool]] = mapped_column(nullable=True)  
