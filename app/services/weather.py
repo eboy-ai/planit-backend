@@ -58,7 +58,7 @@ class WeatherService:
             #호출 후 DB저장 or update
             new_weather = await WeatherCrud.create(db,data)
             await db.flush()
-            await db.refresh(new_weather)
+            
             if response.status_code != 200:
                 raise HTTPException(status_code=502, detail={response.text})
             

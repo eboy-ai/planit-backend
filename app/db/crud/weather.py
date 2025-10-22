@@ -15,3 +15,6 @@ class WeatherCrud:
         db.add(new_weather)
         await db.flush()
         return new_weather
+    
+    # @staticmethod
+    # async def delete(db:AsyncSession,)
