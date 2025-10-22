@@ -15,7 +15,8 @@ router = APIRouter(prefix="/weather", tags=["Weather"])
 async def get_weather_by_city_url(city:str,db:AsyncSession=Depends(get_db)):
     return await WeatherService.get_weather(db,city)
 
-# xlsx
-@router.get("/{city_id}")
-async def get_weather_by_lan(lan:float,dat:float):
-    pass
+# 30일 지난 데이터 삭제 (관리자 의존성 추가 가능) Weather.date기준 30일
+@router.get("/delete-old-weather", description="30일지난 데이터 삭제")
+async def cleanup_weather(db:AsyncSession=Depends(get_db)):
+    result = await WeatherService.delete_old_weather(db)
+    return result

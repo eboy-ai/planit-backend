@@ -7,16 +7,16 @@ from app.services import CityService
 from app.routers.user import Auth_Dependency
 from sqlalchemy import select
 from typing import Optional
-from sqlalchemy import select, or_, desc, func
+from sqlalchemy import select, or_, desc, func, delete
 from app.core.settings import settings
 from datetime import datetime, timedelta
 import httpx
 import json
 class WeatherService:
     #외부 api 호출 후 DB저장 기초호출만구현//
-    #  DB저장후 1시간 이내 재요청시 저장된값 DB에서 호출추가(외부호출누수 방지) 
+    #  DB저장후 3시간 이내 재요청시 저장된값 DB에서 호출추가(외부호출누수 방지) 
     #1도시조회
-    #2db캐시확인 조건분기(2h이상 2h 미만)
+    #2db캐시확인 조건분기(3h이상 3h 미만)
     #3 city_name / get city_id join / 외부 api호출
     @staticmethod
     async def get_weather(db:AsyncSession,city:str):
@@ -67,4 +67,13 @@ class WeatherService:
             await db.flush()        
 
             return data
+        
+    #delete
+    @staticmethod
+    async def delete_old_weather(db:AsyncSession):
+        expired_date = datetime.utcnow() - timedelta(days=30)
+        await db.execute(delete(Weather).where(Weather.date < expired_date))
+        await db.flush()
+        return {"msg":"30일 지난 데이터 삭제 완료"}
+        
             
