@@ -9,6 +9,7 @@ from app.db.schema.schedule import ScheduleCreate, ScheduleUpdate, ScheduleInDB
 from app.db.schema.checklist_item import ChecklistItemCreate, ChecklistItemUpdate, ChecklistItemInDB
 
 trip_service = TripService()
+
 router = APIRouter(prefix="/trips", tags=["Trips"])
 
 # 1. 여행(Trip) 관련 API 엔드포인트
@@ -17,6 +18,11 @@ router = APIRouter(prefix="/trips", tags=["Trips"])
 @router.post("/", response_model=TripInDB, status_code=status.HTTP_201_CREATED)
 async def create_trip(trip: TripCreate, db: AsyncSession = Depends(get_db)):
     return await trip_service.create_trip(db, trip)
+
+# ✅ 특정 사용자의 가장 가까운 여행 (도시 정보 포함) //윤호식 추가
+@router.get("/next/{user_id}")
+async def get_next_trip_with_city(user_id: int, db: AsyncSession = Depends(get_db)):
+    return await trip_service.get_next_trip_with_city(db, user_id)
 
 # 여행 조회(Read)
 @router.get("/{trip_id}", response_model=TripInDB)
