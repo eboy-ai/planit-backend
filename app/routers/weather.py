@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from app.db.database import get_db
-from app.db.model import City
+
 from app.services.weather import WeatherService
 
 from app.core.settings import settings
@@ -14,16 +14,6 @@ router = APIRouter(prefix="/weather", tags=["Weather"])
 @router.get("/",description='Get and Create Weather')
 async def get_weather_by_city_url(city:str,db:AsyncSession=Depends(get_db)):
     return await WeatherService.get_weather(db,city)
-
-#city_id 기반으로 조회 :  여행계획trip에서 
-@router.get("/{city_id}")
-async def get_weather_by_city_id(city_id: int, db: AsyncSession = Depends(get_db)):
-     
-    city = await db.get(City, city_id)
-    if not city:
-        raise HTTPException(status_code=404, detail="City not found")
-    
-    return await WeatherService.get_weather(db, city.city_name)
 
 # 30일 지난 데이터 삭제 (관리자 의존성 추가 가능) Weather.date기준 30일
 @router.get("/delete-old-weather", description="30일지난 데이터 삭제")
