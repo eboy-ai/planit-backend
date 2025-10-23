@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = Field(..., alias="ACCESS_TOKEN_EXPIRE_MINUTES")
 
     #weather apikey
-    weather_key: str = Field(alias="WEATHER_API_KEY")
+    weather_key: str = Field(alias="openweather_api_key")
 
 
     class Config:
