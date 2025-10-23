@@ -1,4 +1,6 @@
 from fastapi import HTTPException, status
+#윤호식 추가
+from sqlalchemy import text 
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 from app.db.crud import crud_trip, crud_city
@@ -136,3 +138,29 @@ class TripService:
     async def get_checklist_items_by_trip(self, db: AsyncSession, trip_id: int) -> List[ChecklistItem]:
         items = await crud_trip.get_checklist_items_by_trip(db, trip_id)
         return items
+    
+    # ✅ 특정 사용자의 가장 가까운 여행 + 도시 정보 포함 (알림용) //윤호식 추가
+    async def get_next_trip_with_city(self, db: AsyncSession, user_id: int):
+        query = text("""
+            SELECT t.id, t.title, t.start_date, t.end_date,
+                   c.city_name, c.lat, c.lon
+            FROM trip t
+            JOIN cities c ON t.city_id = c.id
+            WHERE t.user_id = :user_id
+            ORDER BY t.start_date ASC
+            LIMIT 1
+        """)
+        result = await db.execute(query, {"user_id": user_id})
+        row = result.first()
+        if not row:
+            return None
+
+        return {
+            "id": row.id,
+            "title": row.title,
+            "start_date": row.start_date,
+            "end_date": row.end_date,
+            "city_name": row.city_name,
+            "lat": row.lat,
+            "lon": row.lon,
+        }

@@ -1,7 +1,12 @@
 from pydantic_settings import BaseSettings
 from pydantic import Field
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+ENV_PATH = BASE_DIR / ".env"
 
 class Settings(BaseSettings):
+    
     db_user: str = Field(..., alias="DB_USER")
     db_password: str = Field(..., alias="DB_PASSWORD")
     db_host: str = Field("localhost", alias="DB_HOST")
@@ -13,12 +18,11 @@ class Settings(BaseSettings):
     algorithm: str = Field(..., alias="ALGORITHM")
     access_token_expire_minutes: int = Field(..., alias="ACCESS_TOKEN_EXPIRE_MINUTES")
 
-    #weather apikey
-    weather_key: str = Field(alias="openweather_api_key")
-
+    #Openweather API
+    openweather_api_key: str = Field(..., alias="openweather_api_key")
 
     class Config:
-        env_file = ".env"
+        env_file = ENV_PATH
         extra = "allow"
         populate_by_name = True
         case_sensitive = True

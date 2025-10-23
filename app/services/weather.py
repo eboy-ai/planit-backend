@@ -43,14 +43,14 @@ class WeatherService:
             return json.loads(db_weather.weather_info)
         
         else:
-            #외부api호출 및 저장(lat,lon)
+            #외부api호출 및 저장(lat:위도,lon:경도)
             url = "https://api.openweathermap.org/data/3.0/onecall"
             params = {  "lat": lat, 
                         "lon": lon,
-                        "appid": settings.weather_key, #민감정보 분리 .env
+                        "appid": settings.openweather_api_key, #민감정보 분리 .env
                         "units":'metric',  #°F -> °C
                         "lang":'kr' }
-            print("현재 사용중인 API KEY:", settings.weather_key)
+            print("현재 사용중인 API KEY:", settings.openweather_api_key)
             async with httpx.AsyncClient() as client:
                 response = await client.get(url, params=params)            
                 data=response.json()

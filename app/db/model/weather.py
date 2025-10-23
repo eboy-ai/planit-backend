@@ -17,6 +17,9 @@ class Weather(Base):
 # CREATE TABLE weather (
 #     id BIGINT PRIMARY KEY AUTO_INCREMENT,    
 #     weather_info LONGTEXT,
-#     date DATETIME NOT NULL    
+#     date DATETIME NOT NULL,
+#     city_name VARCHAR(255),
+#     lat FLOAT,
+#     lon FLOAT
 #     -- 변경됨: 기존 trip_id, city_id FK 삭제 → 도시 연결은 city_weathers로 이관
 # );

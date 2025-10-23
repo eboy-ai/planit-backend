@@ -1,6 +1,6 @@
 from app.db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, BigInteger
+from sqlalchemy import String, BigInteger, Float
 from typing import Optional
 
 class City(Base):
