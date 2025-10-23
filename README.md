@@ -28,3 +28,15 @@ CREATE TABLE checklist_item (
     is_checked BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (trip_id) REFERENCES trip(id) on delete cascade
 );
+
+# 패키지 자동 업데이트 
+새로 추가된 npm 의존성만 자동으로 설치하거나 업데이트 하려면 
+프론트/ 백엔드 디렉토리(fastapi/ npm 실행 디렉토리)에서 아래 명령어를 실행합니다
+
+```bash
+node update_packages.js
+```
+
+```bash
+python update_requirements.py
+```
