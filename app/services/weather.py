@@ -1,69 +1,79 @@
 from fastapi import HTTPException,status
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db.model import Weather
+from app.db.model import Weather, City, CityWeather
 from app.db.schema.weather import WeatherBase
 from app.db.crud import WeatherCrud
+from app.services import CityService
 from app.routers.user import Auth_Dependency
 from sqlalchemy import select
 from typing import Optional
-from sqlalchemy import select, or_, desc, func
-from datetime import datetime, timedelta
+from sqlalchemy import select, or_, desc, func, delete
 from app.core.settings import settings
+from datetime import datetime, timedelta
 import httpx
 import json
 class WeatherService:
-
-    # 외부 api 호출 후 DB저장 기초 호출만 구현 //
-    # DB 저장 후 1시간 이내 재요청시 저장된 값 DB에서 호출 추가(외부 호출 누수 방지) 
+    #외부 api 호출 후 DB저장 기초호출만구현//
+    #  DB저장후 3시간 이내 재요청시 저장된값 DB에서 호출추가(외부호출누수 방지) 
+    #1도시조회
+    #2db캐시확인 조건분기(3h이상 3h 미만)
+    #3 city_name / get city_id join / 외부 api호출
     @staticmethod
-    async def get_weather_by_city(db:AsyncSession,city:str):        
-        url = "https://api.openweathermap.org/data/2.5/weather"
-        params = {  "q": city, 
-                    "appid": settings.weather_key, # 민감정보 분리 .env
-                    "units":'metric',  #°F -> °C
-                    "lang":'kr' }
+    async def get_weather(db:AsyncSession,city:str):
+        #도시 조회
+        result = await db.execute(select(City).where(City.city_name==city))
+        db_city = result.scalars().first() #도시정보
+
+        if not db_city:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='도시없음')
+        lat = db_city.lat
+        lon = db_city.lon
+
+        # 해당 도시의 기존 Weather 조회
+        # if CityWeather.
+        query1 = await db.execute(select(CityWeather.weather_id)
+                            .where(CityWeather.city_id==db_city.id))
+        db_city_weather_id = query1
+        if db_city_weather_id:
+            query2 = await db.execute(select(Weather).where(Weather.id == db_city.id))
+            db_weather = query2.scalars().first()
+
+        # 3 캐시 유효성 검사
+        if db_weather and (datetime.utcnow() - db_weather.date) < timedelta(hours=3):
+            return json.loads(db_weather.weather_info)
         
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url, params=params)            
-            data = response.json()
-        # 호출 후 DB저장 (수정 : 캐싱을 위해 어떤 도시의 날씨인지 저장)
-        await WeatherCrud.create(db,data, city_name=city) # city_name 추가
-        await db.commit()
-        if response.status_code == 200:
-            return data
         else:
-            raise HTTPException(status_code=response.status_code, detail=data)
-    
-    # (추가) : 좌표(위도, 경도)로 날씨 조회
-    @staticmethod
-    async def get_weather_by_coords(db:AsyncSession, lat:float, lon:float):
+            #외부api호출 및 저장(lat,lon)
+            url = "https://api.openweathermap.org/data/3.0/onecall"
+            params = {  "lat": lat, 
+                        "lon": lon,
+                        "appid": settings.weather_key, #민감정보 분리 .env
+                        "units":'metric',  #°F -> °C
+                        "lang":'kr' }
+            print("현재 사용중인 API KEY:", settings.weather_key)
+            async with httpx.AsyncClient() as client:
+                response = await client.get(url, params=params)            
+                data=response.json()
 
-        # (추가) : DB에서 캐시 확인 (최근 1시간 이내 데이터)
-        cached_weather = await WeatherCrud.get_recent_weather_by_coords(db, lat, lon)
-
-        if cached_weather:
-            # 캐시된 데이터가 있으면 반환
-            return json.loads(cached_weather.weather_info)
-
-        # 캐시된 데이터가 없으면 OpenWeatherMap API 호출
-        url = "https://api.openweathermap.org/data/2.5/weather"
-        params = {  "lat": lat, 
-                    "lon": lon,
-                    "appid": settings.weather_key, # 민감정보 분리 .env
-                    "units":'metric',  #°F -> °C
-                    "lang":'kr' }
-        
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url, params=params)            
-            data = response.json()
-
-            # API 호출 실패 시
-            if response.status_code != 200:
-                raise HTTPException(status_code=response.status_code, detail=data)
+            #호출 후 DB저장 or update
+            new_weather = await WeatherCrud.create(db,data)
+            await db.flush()
             
-            # API 호출 성공 시 DB 저장 (캐싱을 위해 위도, 경도 저장)
-            await WeatherCrud.create(db, data, lat=lat, lon=lon)
-            await db.commit()
+            if response.status_code != 200:
+                raise HTTPException(status_code=502, detail={response.text})
+            
+            #city_weather 중간테이블 저장
+            db.add(CityWeather(city_id=db_city.id, weather_id=new_weather.id))       
+            await db.flush()        
 
             return data
-
+        
+    #delete
+    @staticmethod
+    async def delete_old_weather(db:AsyncSession):
+        expired_date = datetime.utcnow() - timedelta(days=30)
+        await db.execute(delete(Weather).where(Weather.date < expired_date))
+        await db.flush()
+        return {"msg":"30일 지난 데이터 삭제 완료"}
+        
+            

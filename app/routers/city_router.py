@@ -5,7 +5,7 @@ from app.db.database import get_db
 from app.services.city_service import CityService
 from app.db.schema.cities import CityCreate, CityInDB
 from app.db.schema.places import PlaceCreate, PlaceInDB
-
+from sqlalchemy import select, func
 city_service = CityService()
 router = APIRouter(prefix="/cities", tags=["Cities & Places"])
 
@@ -39,7 +39,7 @@ async def delete_place(place_id: int, db: AsyncSession = Depends(get_db)):
 
 # 1. 도시(City) 관련 API 엔드포인트
 
-# 도시 생성(Create)
+# 도시 생성(Create) #수정 or 삭제필요###
 @router.post("/", response_model=CityInDB, status_code=status.HTTP_201_CREATED)
 async def create_city(city: CityCreate, db: AsyncSession = Depends(get_db)):
     return await city_service.create_city(db, city)
@@ -63,3 +63,23 @@ async def get_city_by_name(city_name: str, db: AsyncSession = Depends(get_db)):
 @router.delete("/{city_id}", response_model=CityInDB)
 async def delete_city(city_id: int, db: AsyncSession = Depends(get_db)):
     return await city_service.delete_city(db, city_id)
+
+import pandas as pd
+from app.db.model.cities import City
+#도시 일괄추가(from xlsx)
+@router.post('/init')
+async def init(db:AsyncSession=Depends(get_db)):
+        count = await db.scalar(select(func.count()).select_from(City))
+        if count == 0:
+            df = pd.read_excel("cities_list_ko.xlsx")
+            for _, row in df.iterrows():
+                db.add(City(
+                    city_name=row["name"],
+                    lat=row["lat"],
+                    lon=row["lon"],
+                    country=row["country"],
+                    ko_name=row["ko_name"],
+                    ko_country=row["ko_country"]
+                ))
+            await db.commit()
+        return {'msg':'도시 목록 추가완료'}

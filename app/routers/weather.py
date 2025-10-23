@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from app.db.database import get_db
-
+from app.db.model import City
 from app.services.weather import WeatherService
 
 from app.core.settings import settings
@@ -15,12 +15,18 @@ router = APIRouter(prefix="/weather", tags=["Weather"])
 async def get_weather_by_city_url(city:str,db:AsyncSession=Depends(get_db)):
     return await WeatherService.get_weather_by_city(db,city)
 
-# (수정) 현재 위치(위도, 경도)로 날씨 조회
-@router.get("/current", description="Get Current Weather by Coordinates")
-async def get_weather_by_coords_url(
-    lat: float = Query(..., description="Latitude (위도)"),
-    lon: float = Query(..., description="Longitude (경도)"),
-    db: AsyncSession = Depends(get_db)
-):
-    # 서비스에도 새로운 함수 (get_weather_by_coords)를 만들어 호출한다.
-    return await WeatherService.get_weather_by_coords(db, lat=lat, lon=lon)
+#city_id 기반으로 조회 :  여행계획trip에서 
+@router.get("/{city_id}")
+async def get_weather_by_city_id(city_id: int, db: AsyncSession = Depends(get_db)):
+     
+    city = await db.get(City, city_id)
+    if not city:
+        raise HTTPException(status_code=404, detail="City not found")
+    
+    return await WeatherService.get_weather(db, city.city_name)
+
+# 30일 지난 데이터 삭제 (관리자 의존성 추가 가능) Weather.date기준 30일
+@router.get("/delete-old-weather", description="30일지난 데이터 삭제")
+async def cleanup_weather(db:AsyncSession=Depends(get_db)):
+    result = await WeatherService.delete_old_weather(db)
+    return result
