@@ -63,3 +63,14 @@ typing-inspection==0.4.1
 typing_extensions==4.15.0
 tzdata==2025.2
 urllib3==2.5.0
+bcrypt==3.2.2
+certifi==2025.10.5
+cffi==2.0.0
+fastapi==0.116.1
+httptools==0.6.4
+jwt==1.4.0
+pycparser==2.23
+PyYAML==6.0.2
+starlette==0.47.3
+watchfiles==1.1.0
+websockets==15.0.1
