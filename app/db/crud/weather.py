@@ -11,7 +11,7 @@ class WeatherCrud:
                      weather_data:WeatherCreate):
 
         weather_info=json.dumps(weather_data)
-        new_weather=Weather(weather_info=weather_info,date=datetime.utcnow())
+        new_weather=Weather(weather_info=weather_info,created_at=datetime.utcnow())
         db.add(new_weather)
         await db.flush()
         return new_weather

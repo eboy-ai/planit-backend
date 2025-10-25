@@ -5,7 +5,7 @@ from typing import Optional
 
 class WeatherBase(BaseModel):
     weather_info: dict
-    date : datetime
+    created_at : datetime
 
 class WeatherCreate(WeatherBase):
     pass
