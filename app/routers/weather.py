@@ -17,7 +17,7 @@ async def get_weather_by_city_url(city:str,db:AsyncSession=Depends(get_db)):
     return await res
 
 # 30일 지난 데이터 삭제 (관리자 의존성 추가 가능) Weather.created_at기준 30일
-@router.get("/delete-old-weather", description="30일지난 데이터 삭제")
+@router.delete("/delete-old-weather", description="30일지난 데이터 삭제")
 async def cleanup_weather(db:AsyncSession=Depends(get_db)):
     result = await WeatherService.delete_old_weather(db)
     return result
@@ -27,6 +27,7 @@ async def cleanup_weather(db:AsyncSession=Depends(get_db)):
 async def get_weather_by_city_id(city_id: int, db: AsyncSession = Depends(get_db)):
      
     city = await db.get(City, city_id)
+    print(city)
     if not city:
         raise HTTPException(status_code=404, detail="City not found")
     
