@@ -34,6 +34,9 @@ class ReviewRead(ReviewInDB):
         username: str | None = None #JOIN 후 None삭제
         like_count: int = 0 #출력 전용 필드, DB/ORM없음 ,count()로 계산 ->조회전용
         trip_id: int
+        city_id: int
+        city_name: str
+        
 
 ##Like
 class LikeCreate(BaseModel):

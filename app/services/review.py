@@ -1,6 +1,6 @@
 from fastapi import HTTPException,status
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db.model import Review,Like,Trip
+from app.db.model import Review,Like,Trip,City
 from app.db.schema.review import ReviewCreate, ReviewUpdate, LikeResponse, ReviewRead
 from app.db.crud import ReviewCrud, LikeCrud
 from app.routers.user import Auth_Dependency
@@ -24,6 +24,14 @@ async def add_likecounts(db:AsyncSession,review:Review):
 async def get_current_user_id(currnet_user:Auth_Dependency):
     user_id = currnet_user.id
     return user_id
+#city_name
+def add_city_name(review:Review):
+    if review.trip and review.trip.city:
+        review.city_id = review.trip.city.id
+        review.city_name = review.trip.city.city_name
+    else: 
+        raise HTTPException(status_code=404, detail='도시정보없음')
+    return review
 
 #리뷰
 class ReviewService:
@@ -59,6 +67,7 @@ class ReviewService:
             return []
         for review in db_review:
             add_username(review)
+            add_city_name(review)
             await add_likecounts(db,review)            
         return db_review
 
@@ -73,6 +82,8 @@ class ReviewService:
         
         #username
         add_username(db_review)
+        #city_name
+        add_city_name(db_review)
         #like_count       
         await add_likecounts(db,db_review)
 
