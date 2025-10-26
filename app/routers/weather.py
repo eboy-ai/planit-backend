@@ -13,7 +13,7 @@ router = APIRouter(prefix="/weather", tags=["Weather"])
 # 도시이름으로 외부api 조회 및 DB저장
 @router.get("/",description='Get and Create Weather')
 async def get_weather_by_city_url(city:str,db:AsyncSession=Depends(get_db)):
-    return await WeatherService.get_weather_by_city(db,city)
+    return await WeatherService.get_weather(db,city)
 
 #city_id 기반으로 조회 :  여행계획trip에서 
 @router.get("/{city_id}")
