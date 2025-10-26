@@ -14,6 +14,6 @@ class Comment(Base):
     created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP, server_default=func.now())
 
 # # FOREIGN KEY (user_id) REFERENCES users(id) on delete cascade,
-    users = relationship("User", back_populates="comments")
+    users = relationship("User", back_populates="comments", lazy="selectin")
 # # FOREIGN KEY (review_id) REFERENCES review(id) on delete cascade
     review = relationship("Review", back_populates="comments")
