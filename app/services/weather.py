@@ -33,7 +33,7 @@ class WeatherService:
         #요청한 도시의 반환되는 객체들중 한개만 선택
         #해당 city_weather가 존재하면 weather_id와 city_weather_id가 일치하는 row반환
         db_city_weather = result_city_weather.scalars().first()        
-        
+        print("city_weather:",db_city_weather)
         #2. db_날씨정보 저장여부
         if not db_city_weather:
             db_weather = None
@@ -41,9 +41,9 @@ class WeatherService:
             result_weather = await db.execute(select(Weather)
                                                .where(db_city_weather.weather_id==Weather.id))            
             db_weather = result_weather.scalar_one_or_none()             
-       
-        # 3 캐시 유효성 검사 3h
-        if db_weather and (datetime.utcnow() - db_weather.created_at) < timedelta(hours=3):
+        
+        # 3 캐시 유효성 검사 3h       
+        if db_weather and (datetime.utcnow() - db_weather.created_at) < timedelta(hours=3):                        
             weather_data = json.loads(db_weather.weather_info)
             print("db에서나간날씨정보:",type(weather_data))
             return weather_data
@@ -77,7 +77,7 @@ class WeatherService:
     #delete
     @staticmethod
     async def delete_old_weather(db:AsyncSession):
-        expired_date = datetime.utcnow() - timedelta(seconds=30) #test용 30초 기존 days=30
+        expired_date = datetime.utcnow() - timedelta(seconds=300) #test용 30초 기존 days=30
         await db.execute(delete(Weather).where(Weather.created_at < expired_date))
         await db.flush()
         return {"msg":"30일 지난 데이터 삭제 완료"}

@@ -17,7 +17,7 @@ async def create_review(title:str=Form(...,min_length=1),
                         content:str=Form(...,min_length=1),
                         rating:int=Form(...,ge=1,le=5),
                         trip_id:int=Form(...,ge=1),
-                        photo:UploadFile=File(None,alias="file"),
+                        photo:UploadFile=File(None),
                         db:AsyncSession=Depends(get_db),
                         current_user:UserModel=Depends(get_current_user),):  #로그인한사람만 작성가능                                                   
     # 현재 로그인한 유저의 User.id

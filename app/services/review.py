@@ -47,7 +47,7 @@ class ReviewService:
                      review_data:ReviewCreate, 
                      user_id:int,
                      trip_id:int,
-                     file:UploadFile|None=None
+                     file:UploadFile|None
                      ):
         #trip_id 유효성 검증
         trip = await db.get(Trip, trip_id)  #PK조회 전용

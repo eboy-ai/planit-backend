@@ -13,8 +13,8 @@ router = APIRouter(prefix="/weather", tags=["Weather"])
 #도시이름으로 외부api 조회 및 DB저장
 @router.get("/",description='Get and Create Weather')
 async def get_weather_by_city_url(city:str,db:AsyncSession=Depends(get_db)):
-    res = WeatherService.get_weather(db,city)   #front axios 변수 res
-    return await res
+    res = await WeatherService.get_weather(db,city)   #front axios 변수 res
+    return  res
 
 # 30일 지난 데이터 삭제 (관리자 의존성 추가 가능) Weather.created_at기준 30일
 @router.delete("/delete-old-weather", description="30일지난 데이터 삭제")

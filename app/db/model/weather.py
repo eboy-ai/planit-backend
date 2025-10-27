@@ -9,7 +9,7 @@ class Weather(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, index=True) 
     weather_info: Mapped[Optional[str]] = mapped_column(TEXT, nullable=True)  # LONGTEXT 대체
-    created_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.utcnow,nullable=False)  
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(timezone.utc),nullable=False)  
 
     city_weathers = relationship("CityWeather", back_populates="weather")
 
