@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, UploadFile, File,Form
 from app.db.database import get_db
 from app.db.schema.review import ReviewCreate, ReviewRead, ReviewUpdate
-from app.services import ReviewService
-from app.routers.user import Auth_Dependency
+from app.services import ReviewService,PhotoService
+from app.routers.user import Auth_Dependency, UserModel, get_current_user
 from app.services.review import get_current_user_id
-
+from app.db.model import Photo
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -13,13 +13,29 @@ router = APIRouter(prefix='/reviews',tags=['Review'])
 # 작성한 여행계획에서 id를 가져올건지 (request body)
 #Create
 @router.post('/', response_model=ReviewRead)
-async def create_review(review_data:ReviewCreate,
-                        trip_id:int,
-                        current_user:Auth_Dependency,   #로그인한사람만 작성가능
-                        db:AsyncSession=Depends(get_db)):
+async def create_review(title:str=Form(...,min_length=1),
+                        content:str=Form(...,min_length=1),
+                        rating:int=Form(...,ge=1,le=5),
+                        trip_id:int=Form(...,ge=1),
+                        photo:UploadFile=File(None,alias="file"),
+                        db:AsyncSession=Depends(get_db),
+                        current_user:UserModel=Depends(get_current_user),):  #로그인한사람만 작성가능                                                   
     # 현재 로그인한 유저의 User.id
-    user_id = current_user.id
-    return await ReviewService.create(db,review_data,user_id,trip_id)
+    user_id = current_user.id 
+    new_review= ReviewCreate(title=title,
+                             content=content,
+                             rating=rating,                           
+                             trip_id=trip_id)
+
+    review = await ReviewService.create(db,
+                                      new_review,
+                                      user_id,
+                                      trip_id,
+                                      photo)
+    return review                                                          
+    
+    
+
 
 #Read
 #리뷰리스트

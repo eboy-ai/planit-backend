@@ -9,23 +9,27 @@ from sqlalchemy import select
 class PhotoService:
     #사진생성 Create
     @staticmethod
-    async def create_image(db:AsyncSession,review_id:int,user_id:int,file:UploadFile):
-        result = await db.execute(select(Review).where(Review.id == review_id))
-        db_review = result.scalars().first()
-        if not db_review:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='리뷰가 존재하지 않습니다')
-        if db_review.user_id != user_id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='본인이 작성한 리뷰에만 업로드가능')
-        contents = await file.read()  #업로드된 파일을 읽어옴
-        db_photo = await PhotoCrud.create(db=db,
-                                          review_id=review_id,                                                                              
-                                          filename=file.filename,
-                                          content_type=file.content_type,
-                                          data=contents)
-        
-        await db.flush()
-        await db.refresh(db_photo)        
-        return db_photo
+    async def create_image(db:AsyncSession,review_id:int,user_id:int,file:UploadFile|None=None):
+        try:    
+            result = await db.execute(select(Review).where(Review.id == review_id))
+            db_review = result.scalars().first()
+            if not db_review:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='리뷰가 존재하지 않습니다')
+            if db_review.user_id != user_id:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='본인이 작성한 리뷰에만 업로드가능')
+            contents = await file.read()  #업로드된 파일을 읽어옴
+            db_photo = await PhotoCrud.create(db=db,
+                                            review_id=review_id,                                                                              
+                                            filename=file.filename,
+                                            content_type=file.content_type,
+                                            data=contents)
+            
+            await db.flush()
+            await db.refresh(db_photo)        
+            print(db_photo)
+            return db_photo
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"이미지 저장 실패: {e}")
     
     #사진 리스트 조회 Read
     @staticmethod

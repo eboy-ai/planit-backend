@@ -25,10 +25,11 @@ class CommentService:
             db_comment = await CommentCrud.create(db, comment_data,user_id,review_id)
 
             # await db.commit()
+            add_username(db_comment)
             await db.refresh(db_comment)
             return db_comment
         except Exception:
-            raise
+            raise HTTPException(404, detail='없는 리뷰id')
     
     #Read    
     #trip id에 해당하는 list조회(R) 

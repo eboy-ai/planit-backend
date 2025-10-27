@@ -1,13 +1,13 @@
-from fastapi import HTTPException,status
+from fastapi import HTTPException,status, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db.model import Review,Like,Trip,City
+from app.db.model import Review,Like,Trip,City, Photo
 from app.db.schema.review import ReviewCreate, ReviewUpdate, LikeResponse, ReviewRead
 from app.db.crud import ReviewCrud, LikeCrud
 from app.routers.user import Auth_Dependency
 from sqlalchemy import select
 from typing import Optional
 from sqlalchemy import select, or_, desc, func
-
+from app.services.photo import PhotoService
 # by_relationship- responsebody에 유저이름, 좋아요 수 추가헬퍼함수  
 # #username  
 def add_username(review:Review):    
@@ -32,12 +32,23 @@ def add_city_name(review:Review):
     else: 
         raise HTTPException(status_code=404, detail='도시정보없음')
     return review
+def add_photo(review:Review,photos:Photo):
+    if photos:
+        photos.review_id=review.id
+        review.photos.data    
+        
+    return review
 
 #리뷰
 class ReviewService:
     #Create
     @staticmethod
-    async def create(db:AsyncSession,review_data:ReviewCreate, user_id:int,trip_id:int):
+    async def create(db:AsyncSession,
+                     review_data:ReviewCreate, 
+                     user_id:int,
+                     trip_id:int,
+                     file:UploadFile|None=None
+                     ):
         #trip_id 유효성 검증
         trip = await db.get(Trip, trip_id)  #PK조회 전용
         if not trip:
@@ -48,9 +59,18 @@ class ReviewService:
         await db.refresh(db_review)
         
         #orm 반환용 / user주입 / like_count 초기값 / city_id,cityname
-        db_review = add_username(db_review)
-        db_review = add_city_name(db_review)
-        db_review.like_counts = 0
+        user_review = add_username(db_review)
+        city_review = add_city_name(user_review)
+        city_review.like_counts = 0
+        print("db_review",db_review)
+        print("city_review",city_review)
+
+        if file is not None:    
+            print("file",file)                    
+            review_id=db_review.id
+            print("photo.review_id",review_id)
+            await PhotoService.create_image(db,review_id,user_id,file)           
+       
         return db_review
         
     
