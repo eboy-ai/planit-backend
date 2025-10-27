@@ -66,7 +66,13 @@ class WeatherService:
             await db.flush()
             
             if response.status_code != 200:
-                raise HTTPException(status_code=502, detail={response.text})
+                # API 호출 실패 시
+                raise HTTPException(status_code=response.status_code, detail=response.json())
+                
+            data=response.json()
+
+        # Weather 테이블에 새 데이터 저장
+        new_weather = await WeatherCrud.create(db=db, weather_data=data)
             
             #city_weather 중간테이블 저장
             db.add(CityWeather(city_id=db_city.id, weather_id=new_weather.id))       
