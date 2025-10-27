@@ -29,51 +29,63 @@ class WeatherService:
         lat = db_city.lat
         lon = db_city.lon
 
-        # 해당 도시의 기존 Weather 조회
-        # if CityWeather.
-        query1 = await db.execute(select(CityWeather.weather_id)
-                            .where(CityWeather.city_id==db_city.id))
-        db_city_weather_id = query1
-        if db_city_weather_id:
-            query2 = await db.execute(select(Weather).where(Weather.id == db_city.id))
-            db_weather = query2.scalars().first()
+        # -----------------------------------------------------------------
+        # [수정] 캐시 조회 로직 (M2M Join 사용)
+        # -----------------------------------------------------------------
+        three_hours_ago = datetime.utcnow() - timedelta(hours=3)
+        
+        # 2. City -> CityWeather -> Weather 순으로 조인하여 최신 날씨 탐색
+        stmt = select(Weather).join(
+            CityWeather, Weather.id == CityWeather.weather_id
+        ).where(
+            CityWeather.city_id == db_city.id,  # 이 도시(city_id)의 날씨 중
+            Weather.date >= three_hours_ago     # 3시간 이내의 날씨
+        ).order_by(desc(Weather.date)).limit(1) # 가장 최신 것
+        
+        cached_result = await db.execute(stmt)
+        db_weather = cached_result.scalars().first() # 가장 최신의 유효한 캐시
 
-        # 3 캐시 유효성 검사
-        if db_weather and (datetime.utcnow() - db_weather.date) < timedelta(hours=3):
+        # 3. 캐시 유효성 검사
+        if db_weather:
+            # 캐시가 있으면 DB 데이터를 파싱하여 반환
             return json.loads(db_weather.weather_info)
         
-        else:
-            #외부api호출 및 저장(lat,lon)
-            url = "https://api.openweathermap.org/data/3.0/onecall"
-            params = {  "lat": lat, 
-                        "lon": lon,
-                        "appid": settings.openweather_api_key, #민감정보 분리 .env
-                        "units":'metric',  #°F -> °C
-                        "lang":'kr' }
-            print("현재 사용중인 API KEY:", settings.openweather_api_key)
-            async with httpx.AsyncClient() as client:
-                response = await client.get(url, params=params)            
-                data=response.json()
+        # 4. 캐시가 없으면 외부 API 호출
+        print(f"Fetching new weather from API for {city}") # 디버깅용
+        url = "https://api.openweathermap.org/data/3.0/onecall"
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "appid": settings.openweather_api_key,
+            "units": 'metric',
+            "lang": 'kr'
+        }
 
-            #호출 후 DB저장 or update
-            new_weather = await WeatherCrud.create(db,data)
-            await db.flush()
-            
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, params=params)
+
             if response.status_code != 200:
-                raise HTTPException(status_code=502, detail={response.text})
-            
-            #city_weather 중간테이블 저장
-            db.add(CityWeather(city_id=db_city.id, weather_id=new_weather.id))       
-            await db.flush()        
+                # API 호출 실패 시
+                raise HTTPException(status_code=response.status_code, detail=response.json())
+                
+            data=response.json()
 
-            return data
+        # Weather 테이블에 새 데이터 저장
+        new_weather = await WeatherCrud.create(db=db, weather_data=data)
+            
+        # city_weather 중간테이블 저장
+        db.add(CityWeather(city_id=db_city.id, weather_id=new_weather.id))
+
+        await db.commit()        
+
+        return data
         
     #delete
     @staticmethod
     async def delete_old_weather(db:AsyncSession):
         expired_date = datetime.utcnow() - timedelta(days=30)
         await db.execute(delete(Weather).where(Weather.date < expired_date))
-        await db.flush()
+        await db.commit()
         return {"msg":"30일 지난 데이터 삭제 완료"}
         
             

@@ -9,18 +9,13 @@ class WeatherCrud:
     @staticmethod
     async def create(db: AsyncSession,
                         weather_data: dict,
-                        city_name: Optional[str] = None,
-                        lat: Optional[float] = None,
-                        lon: Optional[float] = None
                     ):
-
+        # 수정 : Weather 모델에는 weather_info와 date만 존재하므로
+        # city_name, lat, lon 필드는 제거
         weather_info=json.dumps(weather_data)
         new_weather = Weather(
             weather_info = weather_info,
             date = datetime.utcnow(),
-            city_name = city_name,
-            lat = lat,
-            lon = lon
         )
         db.add(new_weather)
         await db.flush()
