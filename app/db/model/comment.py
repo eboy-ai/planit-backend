@@ -16,4 +16,4 @@ class Comment(Base):
 # # FOREIGN KEY (user_id) REFERENCES users(id) on delete cascade,
     users = relationship("User", back_populates="comments", lazy="selectin")
 # # FOREIGN KEY (review_id) REFERENCES review(id) on delete cascade
-    review = relationship("Review", back_populates="comments")
+    review = relationship("Review", back_populates="comments",lazy="selectin")
