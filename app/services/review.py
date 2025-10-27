@@ -47,8 +47,9 @@ class ReviewService:
         # await db.commit() -get_db에서 commit 관리중 -> 삭제     
         await db.refresh(db_review)
         
-        #orm 반환용 / user주입 / like_count 초기값
+        #orm 반환용 / user주입 / like_count 초기값 / city_id,cityname
         db_review = add_username(db_review)
+        db_review = add_city_name(db_review)
         db_review.like_counts = 0
         return db_review
         
