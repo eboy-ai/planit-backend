@@ -8,6 +8,7 @@ from sqlalchemy import select
 from typing import Optional
 from sqlalchemy import select, or_, desc, func
 from app.services.photo import PhotoService
+from app.services.comment import CommentService
 # by_relationship- responsebody에 유저이름, 좋아요 수 추가헬퍼함수  
 # #username  
 def add_username(review:Review):    
@@ -32,11 +33,12 @@ def add_city_name(review:Review):
     else: 
         raise HTTPException(status_code=404, detail='도시정보없음')
     return review
-def add_photo(review:Review,photos:Photo):
-    if photos:
-        photos.review_id=review.id
-        review.photos.data    
-        
+def add_photo(review:Review):
+    if review.photos:
+        first_photo = review.photos[0]
+        review.photo_id = first_photo.id
+    else: 
+        review.photo_id= None
     return review
 
 #리뷰
@@ -88,7 +90,20 @@ class ReviewService:
         for review in db_review:
             add_username(review)
             add_city_name(review)
-            await add_likecounts(db,review)            
+            await add_likecounts(db,review)  
+
+            #comments []            
+            comments=await CommentService.get_all_comment(db,review.id, None, 10, 0)
+            if comments:
+                for comment in comments:
+                    add_username(comment)
+            review.comments = comments or []
+
+            #photos []
+            photos = await PhotoService.get_all_photo(db,review.id)   
+            review.photos = photos or []
+            add_photo(review)
+
         return db_review
 
     #review_id로 개별조회
@@ -128,6 +143,7 @@ class ReviewService:
         add_username(update_data)
         #like_count       
         await add_likecounts(db,update_data)
+        #comment
 
         return update_data
         

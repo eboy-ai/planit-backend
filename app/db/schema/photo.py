@@ -13,7 +13,7 @@ class PhotoCreate(PhotoBase):
 
 #Read
 class PhotoInDB(PhotoBase):
-    id:int = Field(...,alias="photo_id")
+    photo_id:int = Field(None,alias="id")
     review_id:int
     created_at: Optional[datetime]
 

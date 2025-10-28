@@ -18,9 +18,9 @@ class Review(Base):
     
     users = relationship("User", back_populates="review", lazy="selectin")  #     
     trip = relationship("Trip", back_populates="review", lazy="selectin") 
-    comments = relationship("Comment", back_populates="review")
+    comments = relationship("Comment", back_populates="review", lazy="selectin")
     likes = relationship("Like", back_populates="review")
-    photos = relationship("Photo", back_populates="review")
+    photos = relationship("Photo", back_populates="review", lazy="selectin")
 
 #like
 class Like(Base):

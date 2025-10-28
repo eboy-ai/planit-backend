@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime, timezone
 from typing import List
-from app.db.schema.photo import PhotoRead
+from app.db.schema.comment import CommentRead
 ##ReviewBase
 class ReviewBase(BaseModel):
     title: str #= Field(..., max_length=255, min_length=1)
@@ -30,6 +30,10 @@ class ReviewInDB(ReviewBase):
     class Config:
         from_attributes = True
         populate_by_name =True # id - review_id alias 호환성
+#safeuser
+class SafeUser(BaseModel):
+     user_id:int
+     username:str |None
     
 class ReviewRead(ReviewInDB):        
         username: str | None = None #JOIN 후 None삭제
@@ -37,6 +41,8 @@ class ReviewRead(ReviewInDB):
         trip_id: int
         city_id: int
         city_name: str
+        comments: list[CommentRead] = []
+        photo_id: int
         # file: PhotoRead | None = Field(default=None, alias="photo")
 
 ##Like
