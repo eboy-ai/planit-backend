@@ -6,7 +6,7 @@ from typing import Optional
 from jose.exceptions import ExpiredSignatureError
 
 #토큰 생성
-def create_access_token(data:dict, expires_time: Optional[int] = 15):
+def create_access_token(data:dict, expires_time: Optional[int] = 1500):
   exp=datetime.utcnow() +timedelta(minutes=expires_time)
   data["exp"]=exp
   return jwt.encode(data, settings.secret_key, algorithm=settings.algorithm)
