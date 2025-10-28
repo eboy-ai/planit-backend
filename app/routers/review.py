@@ -37,7 +37,7 @@ async def create_review(trip_id:int,
         print("photo.review_id",review_id)
         await PhotoService.create_image(db,review_id,user_id,file)
 
-    return db_review
+    return {"review_data":db_review,"photo":file}
 
 #Read
 #리뷰리스트
