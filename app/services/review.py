@@ -46,8 +46,7 @@ class ReviewService:
     async def create(db:AsyncSession,
                      review_data:ReviewCreate, 
                      user_id:int,
-                     trip_id:int,
-                     file:UploadFile|None
+                     trip_id:int,                     
                      ):
         #trip_id 유효성 검증
         trip = await db.get(Trip, trip_id)  #PK조회 전용
@@ -65,11 +64,11 @@ class ReviewService:
         print("db_review",db_review)
         print("city_review",city_review)
 
-        if file is not None:    
-            print("file",file)                    
-            review_id=db_review.id
-            print("photo.review_id",review_id)
-            await PhotoService.create_image(db,review_id,user_id,file)           
+        # if file is not None:    
+        #     print("file",file)                    
+        #     review_id=db_review.id
+        #     print("photo.review_id",review_id)
+        #     await PhotoService.create_image(db,review_id,user_id,file)           
        
         return db_review
         
