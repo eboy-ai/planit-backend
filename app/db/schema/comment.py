@@ -25,7 +25,6 @@ class CommentInDB(CommentBase):
         from_attributes=True
 
 #Read(Response전용)
-class CommentRead(CommentInDB):
-    pass
-    # username: str #JOIN결과
+class CommentRead(CommentInDB):    
+    username: str |None = None #JOIN결과
     

@@ -1,12 +1,13 @@
 from pydantic import BaseModel, Field
 from datetime import datetime, timezone
-
+from typing import List
+from app.db.schema.photo import PhotoRead
 ##ReviewBase
 class ReviewBase(BaseModel):
     title: str = Field(..., max_length=255, min_length=1)
     content:str = Field(...,min_length=1)
     rating:int = Field(..., ge=1, le=5)
-    # trip_id:int = Field(...,ge=1)
+    trip_id:int = Field(...,ge=1)
 
 #Create
 class ReviewCreate(ReviewBase):
@@ -34,6 +35,9 @@ class ReviewRead(ReviewInDB):
         username: str | None = None #JOIN 후 None삭제
         like_count: int = 0 #출력 전용 필드, DB/ORM없음 ,count()로 계산 ->조회전용
         trip_id: int
+        city_id: int
+        city_name: str
+        # file: PhotoRead | None = Field(default=None, alias="photo")
 
 ##Like
 class LikeCreate(BaseModel):
