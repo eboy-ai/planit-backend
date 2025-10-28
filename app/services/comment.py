@@ -6,6 +6,14 @@ from app.db.crud import CommentCrud
 from sqlalchemy import select
 from typing import Optional
 
+# username join :relationship
+def add_username(comment:Comment):    
+    if comment.users:
+        comment.username = comment.users.username
+    else:
+        raise HTTPException(status_code=404,detail='작성자 정보 없음')
+    return comment
+
 class CommentService:
     #Create
     @staticmethod
@@ -17,10 +25,11 @@ class CommentService:
             db_comment = await CommentCrud.create(db, comment_data,user_id,review_id)
 
             # await db.commit()
+            add_username(db_comment)
             await db.refresh(db_comment)
             return db_comment
         except Exception:
-            raise
+            raise HTTPException(404, detail='없는 리뷰id')
     
     #Read    
     #trip id에 해당하는 list조회(R) 
@@ -31,7 +40,11 @@ class CommentService:
                       limit:int=10,
                       offset:int = 0):
         db_comment = await CommentCrud.get_all(db,review_id,search,limit,offset)
-
+        if not db_comment:
+            return []
+        for comment in db_comment:
+            add_username(comment)
+        
         return db_comment
     
     @staticmethod
@@ -39,6 +52,12 @@ class CommentService:
         db_comment = await CommentCrud.get_id(db, comment_id)
         if not db_comment:
             raise HTTPException(status_code=404, detail="댓글을 찾을 수 없습니다")
+        if not db_comment.users:
+            raise HTTPException(status_code=404, detail='작성자 정보 없음')
+        
+        #username
+        add_username(db_comment)
+
         return db_comment
 
     #Update

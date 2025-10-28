@@ -15,7 +15,7 @@ class Trip(Base):
     end_date: Mapped[Optional[datetime]] = mapped_column(nullable=True)  
 
     users = relationship("User", back_populates="trip")
-    city = relationship("City", back_populates="trip")
+    city = relationship("City", back_populates="trip",lazy="selectin")
     trip_day = relationship("TripDay", back_populates="trip")
     checklist_item = relationship("ChecklistItem", back_populates="trip")
     review = relationship("Review", back_populates="trip") # cascade="all, delete" orm level

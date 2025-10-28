@@ -4,8 +4,8 @@ from typing import List
 from app.db.schema.photo import PhotoRead
 ##ReviewBase
 class ReviewBase(BaseModel):
-    title: str = Field(..., max_length=255, min_length=1)
-    content:str = Field(...,min_length=1)
+    title: str #= Field(..., max_length=255, min_length=1)
+    content:str #= Field(...,min_length=1)
     rating:int = Field(..., ge=1, le=5)
     trip_id:int = Field(...,ge=1)
 

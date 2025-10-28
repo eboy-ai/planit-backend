@@ -16,4 +16,4 @@ class Photo(Base):
     created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP, server_default=func.now()) 
     
     # FOREIGN KEY (review_id) REFERENCES review(id) ON DELETE CASCADE
-    review = relationship("Review", back_populates="photos")
+    review = relationship("Review", back_populates="photos",lazy='selectin')

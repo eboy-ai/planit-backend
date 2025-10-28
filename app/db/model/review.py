@@ -17,7 +17,7 @@ class Review(Base):
     created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP, server_default=func.now())
     
     users = relationship("User", back_populates="review", lazy="selectin")  #     
-    trip = relationship("Trip", back_populates="review") 
+    trip = relationship("Trip", back_populates="review", lazy="selectin") 
     comments = relationship("Comment", back_populates="review")
     likes = relationship("Like", back_populates="review")
     photos = relationship("Photo", back_populates="review")
