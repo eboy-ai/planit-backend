@@ -78,20 +78,22 @@ class ReviewService:
             add_username(review)
             add_city_name(review)
             await add_likecounts(db,review)  
-            
+            review_id=review.id
+            print("reviewid:",review_id)
             #comments []            
-            comments=await CommentService.get_all_comment(db,review.id, None, 10, 0)
+            comments=await CommentService.get_all_comment(db,review_id, None, 10, 0)
             if comments:
                 for comment in comments:
                     add_username(comment)
             review.comments = comments or []
             photo_result =await db.execute(select(Photo.id).where(Photo.review_id==review.id))
-            db_photos = photo_result.scalar()
-            print("db_photos:",db_photos)
-            if db_photos:         
-                    review.photo_id=db_photos                
+            db_photo_id = photo_result.scalar()
+            print("db_photos\.id:",db_photo_id)
+            if db_photo_id:         
+                    review.photo_url=f'/reviews/{review_id}/photos{db_photo_id}'
+                    print("photo_url: ",review.photo_url)
             else:
-                review.photo_id=None                
+                review.photo_url=None                
 
         return db_review
 
