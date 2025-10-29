@@ -16,8 +16,8 @@ class Trip(Base):
 
     users = relationship("User", back_populates="trip")
     city = relationship("City", back_populates="trip",lazy="selectin")
-    trip_day = relationship("TripDay", back_populates="trip")
-    checklist_item = relationship("ChecklistItem", back_populates="trip")
+    trip_day = relationship("TripDay", back_populates="trip", cascade="all, delete-orphan")
+    checklist_item = relationship("ChecklistItem", back_populates="trip", cascade="all, delete-orphan")
     review = relationship("Review", back_populates="trip") # cascade="all, delete" orm level
 
 # CREATE TABLE trip (
