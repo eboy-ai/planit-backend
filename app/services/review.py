@@ -33,13 +33,6 @@ def add_city_name(review:Review):
     else: 
         raise HTTPException(status_code=404, detail='도시정보없음')
     return review
-# def add_photo(photo:Photo):
-#     if photo:
-#         photo
-#         review.photo_id = first_photo.id
-#     else: 
-#         review.photo_id= None
-#     return review
 
 #리뷰
 class ReviewService:
@@ -64,16 +57,9 @@ class ReviewService:
         city_review = add_city_name(user_review)
         city_review.like_counts = 0
         print("db_review",db_review)
-        print("city_review",city_review)
-
-        # if file is not None:    
-        #     print("file",file)                    
-        #     review_id=db_review.id
-        #     print("photo.review_id",review_id)
-        #     await PhotoService.create_image(db,review_id,user_id,file)           
+        print("city_review",city_review)              
        
-        return db_review
-        
+        return db_review        
     
     #Read    
     #trip id에 해당하는 list조회(R) - 여행별 리뷰 / trip_id없을시 빈배열반환 []
@@ -92,8 +78,7 @@ class ReviewService:
             add_username(review)
             add_city_name(review)
             await add_likecounts(db,review)  
-            print("리뷰객체:",review)
-
+            
             #comments []            
             comments=await CommentService.get_all_comment(db,review.id, None, 10, 0)
             if comments:
@@ -103,17 +88,10 @@ class ReviewService:
             photo_result =await db.execute(select(Photo.id).where(Photo.review_id==review.id))
             db_photos = photo_result.scalar()
             print("db_photos:",db_photos)
-            if db_photos:
-                # for photos_id in :
-                    review.photo_id=db_photos
-
-                    print("포토id?:",db_photos)
-                # print("photo_id",db_photos.id)     
-                # photo_ids=[i for(i,) in db_photos_id.all()]
-                
+            if db_photos:         
+                    review.photo_id=db_photos                
             else:
-                review.photo_id=None
-                
+                review.photo_id=None                
 
         return db_review
 
