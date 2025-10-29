@@ -33,13 +33,13 @@ def add_city_name(review:Review):
     else: 
         raise HTTPException(status_code=404, detail='도시정보없음')
     return review
-def add_photo(review:Review):
-    if review.photos:
-        first_photo = review.photos[0]
-        review.photo_id = first_photo.id
-    else: 
-        review.photo_id= None
-    return review
+# def add_photo(photo:Photo):
+#     if photo:
+#         photo
+#         review.photo_id = first_photo.id
+#     else: 
+#         review.photo_id= None
+#     return review
 
 #리뷰
 class ReviewService:
@@ -85,12 +85,14 @@ class ReviewService:
                       offset:int = 0):
         db_review = await ReviewCrud.get_all(db,trip_id,search,limit,offset)
         #orm 반환용 / user주입 / like_count 초기값
+        
         if not db_review:
             return []
         for review in db_review:
             add_username(review)
             add_city_name(review)
             await add_likecounts(db,review)  
+            print("리뷰객체:",review)
 
             #comments []            
             comments=await CommentService.get_all_comment(db,review.id, None, 10, 0)
@@ -98,11 +100,20 @@ class ReviewService:
                 for comment in comments:
                     add_username(comment)
             review.comments = comments or []
+            photo_result =await db.execute(select(Photo.id).where(Photo.review_id==review.id))
+            db_photos = photo_result.scalar()
+            print("db_photos:",db_photos)
+            if db_photos:
+                # for photos_id in :
+                    review.photo_id=db_photos
 
-            #photos []
-            photos = await PhotoService.get_all_photo(db,review.id)   
-            review.photos = photos or []
-            add_photo(review)
+                    print("포토id?:",db_photos)
+                # print("photo_id",db_photos.id)     
+                # photo_ids=[i for(i,) in db_photos_id.all()]
+                
+            else:
+                review.photo_id=None
+                
 
         return db_review
 

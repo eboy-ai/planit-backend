@@ -4,7 +4,7 @@ from app.db.schema.review import ReviewCreate, ReviewRead, ReviewUpdate
 from app.services import ReviewService,PhotoService
 from app.routers.user import Auth_Dependency, get_current_user
 from app.services.review import get_current_user_id
-
+from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -47,11 +47,14 @@ async def review_list(trip_id:int,
                        serach:str|None=Query(None,min_length=1),
                        limit:int = Query(10,ge=1,le=30),
                        offset:int = Query(0,ge=0)):
-    return await ReviewService.get_all_review( db=db,
+    try:
+        return await ReviewService.get_all_review( db=db,
                                                trip_id=trip_id,
                                                search=serach,
                                                limit=limit,
                                                offset=offset)
+    except Exception as e:
+        raise e
    
 #상세보기
 @router.get('/{review_id}', response_model=ReviewRead)

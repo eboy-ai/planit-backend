@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime, timezone
 from typing import List
 from app.db.schema.comment import CommentRead
+from app.db.schema.photo import PhotoRead
 ##ReviewBase
 class ReviewBase(BaseModel):
     title: str #= Field(..., max_length=255, min_length=1)
@@ -42,7 +43,7 @@ class ReviewRead(ReviewInDB):
         city_id: int
         city_name: str
         comments: list[CommentRead] = []
-        photo_id: int
+        photo_id: int | None
         # file: PhotoRead | None = Field(default=None, alias="photo")
 
 ##Like
