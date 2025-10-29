@@ -9,6 +9,7 @@ from typing import Optional
 from sqlalchemy import select, or_, desc, func
 from app.services.photo import PhotoService
 from app.services.comment import CommentService
+from app.core.settings import settings
 # by_relationship- responsebody에 유저이름, 좋아요 수 추가헬퍼함수  
 # #username  
 def add_username(review:Review):    
@@ -56,8 +57,8 @@ class ReviewService:
         user_review = add_username(db_review)
         city_review = add_city_name(user_review)
         city_review.like_counts = 0
-        print("db_review",db_review)
-        print("city_review",city_review)              
+        # print("db_review",db_review)
+        # print("city_review",city_review)              
        
         return db_review        
     
@@ -79,7 +80,7 @@ class ReviewService:
             add_city_name(review)
             await add_likecounts(db,review)  
             review_id=review.id
-            print("reviewid:",review_id)
+            # print("reviewid:",review_id)
             #comments []            
             comments=await CommentService.get_all_comment(db,review_id, None, 10, 0)
             if comments:
@@ -88,10 +89,11 @@ class ReviewService:
             review.comments = comments or []
             photo_result =await db.execute(select(Photo.id).where(Photo.review_id==review.id))
             db_photo_id = photo_result.scalar()
-            print("db_photos\.id:",db_photo_id)
+            # print("db_photos\.id:",db_photo_id)
             if db_photo_id:         
-                    review.photo_url=f'/reviews/{review_id}/photos{db_photo_id}'
-                    print("photo_url: ",review.photo_url)
+                    # review.photo_url=f'{settings.backend_url}/reviews/{review_id}/photos/{db_photo_id}/raw'
+                    review.photo_url=f'http://localhost:8081/reviews/{review_id}/photos/{db_photo_id}/raw'
+                    # print("photo_url:",review.photo_url)
             else:
                 review.photo_url=None                
 

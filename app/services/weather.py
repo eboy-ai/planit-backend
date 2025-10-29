@@ -48,6 +48,7 @@ class WeatherService:
         # 3. 캐시 유효성 검사
         if db_weather:
             # 캐시가 있으면 DB 데이터를 파싱하여 반환
+            print("db에서나간날씨id:",db_weather.id)
             return json.loads(db_weather.weather_info)
         
         # 4. 캐시가 없으면 외부 API 호출

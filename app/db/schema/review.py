@@ -43,7 +43,7 @@ class ReviewRead(ReviewInDB):
         city_id: int
         city_name: str
         comments: list[CommentRead] = []
-        photo_id: int | None
+        photo_url: str | None
         # file: PhotoRead | None = Field(default=None, alias="photo")
 
 ##Like
