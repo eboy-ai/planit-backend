@@ -66,11 +66,11 @@ class ReviewService:
     #trip id에 해당하는 list조회(R) - 여행별 리뷰 / trip_id없을시 빈배열반환 []
     @staticmethod
     async def get_all_review(db:AsyncSession,
-                      trip_id:int,
+                      trip_id:Optional[int],
                       search:Optional[str]=None,
-                      limit:int=10,
+                      limit:int=100,
                       offset:int = 0):
-        db_review = await ReviewCrud.get_all(db,trip_id,search,limit,offset)
+        db_review = await ReviewCrud.get_all(db,search,limit,offset)
         #orm 반환용 / user주입 / like_count 초기값
         
         if not db_review:
@@ -81,12 +81,15 @@ class ReviewService:
             await add_likecounts(db,review)  
             review_id=review.id
             # print("reviewid:",review_id)
+
             #comments []            
             comments=await CommentService.get_all_comment(db,review_id, None, 10, 0)
             if comments:
                 for comment in comments:
                     add_username(comment)
             review.comments = comments or []
+
+            #photo_url
             photo_result =await db.execute(select(Photo.id).where(Photo.review_id==review.id))
             db_photo_id = photo_result.scalar()
             # print("db_photos\.id:",db_photo_id)

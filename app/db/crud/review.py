@@ -36,18 +36,17 @@ class ReviewCrud:
     
     #reveiw-list 조회 trip에속한 리뷰만
     @staticmethod
-    async def get_all(db:AsyncSession,
-                      trip_id:int,
+    async def get_all(db:AsyncSession,                      
                       search:Optional[str]=None,
-                      limit:int=10,
+                      limit:int=100,
                       offset:int = 0
                       ):
-        #데이터선택
-        query = select(Review).where(Review.trip_id == trip_id)
+        #데이터선택 
+        query = select(Review).order_by(desc(Review.created_at))
 
         #검색 기능 조건
         if search:
-            query = query.where(or_(Review.title.ilike(f'%{search.strip()}%'),
+            query = select(Review).where(or_(Review.title.ilike(f'%{search.strip()}%'),
                                     Review.content.ilike(f'%{search.strip()}%')))
         #페이지네이션
         query = query.limit(limit).offset(offset)

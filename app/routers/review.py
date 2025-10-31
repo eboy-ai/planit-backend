@@ -6,7 +6,7 @@ from app.routers.user import Auth_Dependency, get_current_user
 from app.services.review import get_current_user_id
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from typing import Optional
 
 router = APIRouter(prefix='/reviews',tags=['Review'])
 #pydantic 의존성으로 파라미터 간소화
@@ -42,10 +42,10 @@ async def create_review(trip_id:int,
 #Read
 #리뷰리스트
 @router.get('/', response_model=list[ReviewRead])
-async def review_list(trip_id:int,
+async def review_list(trip_id:int|None=None,
                        db:AsyncSession=Depends(get_db),
                        serach:str|None=Query(None,min_length=1),
-                       limit:int = Query(10,ge=1,le=30),
+                       limit:int = Query(100,ge=1),
                        offset:int = Query(0,ge=0)):
     try:
         return await ReviewService.get_all_review( db=db,
