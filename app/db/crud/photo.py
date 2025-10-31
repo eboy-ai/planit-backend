@@ -29,7 +29,7 @@ class PhotoCrud:
         query = select(Photo).where(Photo.review_id==review_id)
         result = await db.execute(query)
         photos= result.scalars().all()
-        print('crud return:', photos, type(photos))
+        # print('crud return:', photos, type(photos))
         return photos
     
 

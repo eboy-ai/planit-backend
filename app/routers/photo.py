@@ -45,12 +45,9 @@ async def get_photo_raw(review_id:int, photo_id:int, db:AsyncSession=Depends(get
                              )
 # 올린이미지 삭제
 @router.delete('/{photo_id}', description='Delete Photo')
-async def delete_photo(photo_id:int,
+async def delete_photo(photo_id:int,                       
                        user_id:int=Depends(get_current_user_id),
                        db:AsyncSession=Depends(get_db)):
     db_photo = await PhotoService.delete_photo_by_id(db,photo_id,user_id)
-    
-    if db_photo:
-        return {'msg':'사진삭제완료'}
-    else:
-        return {'msg':'사진삭제실패'}
+    print(db_photo)
+    return db_photo
