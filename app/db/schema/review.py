@@ -46,6 +46,10 @@ class ReviewRead(ReviewInDB):
         photo_url: str | None
         # file: PhotoRead | None = Field(default=None, alias="photo")
 
+class oneReviewRead(ReviewInDB):
+     trip_id: int
+     photo_url: str | None
+
 ##Like
 class LikeCreate(BaseModel):
      review_id: int

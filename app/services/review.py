@@ -108,12 +108,24 @@ class ReviewService:
         if not db_review.users:
             raise HTTPException(status_code=404, detail='작성자 정보 없음')
         
+        print()
         #username
         add_username(db_review)
         #city_name
         add_city_name(db_review)
         #like_count       
         await add_likecounts(db,db_review)
+        #photo_url 추가
+        photo_result =await db.execute(select(Photo.id).where(Photo.review_id==db_review.id))
+        db_photo_id = photo_result.scalar()
+        # print("db_photos\.id:",db_photo_id)
+        if db_photo_id:         
+                # review.photo_url=f'{settings.backend_url}/reviews/{review_id}/photos/{db_photo_id}/raw'
+                db_review.photo_url=f'http://localhost:8081/reviews/{review_id}/photos/{db_photo_id}/raw'
+                print("photo_url:",db_review.photo_url)
+        else:
+            db_review.photo_url=None          
+
 
         return db_review
     
