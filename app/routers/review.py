@@ -63,7 +63,7 @@ async def read_review(review_id:int,db:AsyncSession=Depends(get_db)):
     return result
 
 #Update
-@router.put('/{review_id}', response_model=ReviewRead)
+@router.put('/{review_id}', response_model=ReviewUpdate)
 async def update_review(review_id:int, 
                         review:ReviewUpdate,
                         user_id:int = Depends(get_current_user_id),
